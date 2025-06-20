@@ -1,0 +1,182 @@
+[
+  {
+    "id": "PL001",
+    "name": "Plancha MDF 15mm",
+    "category": "Planchas",
+    "price": 368.95,
+    "stock": 150,
+    "image": "https://www.gardenstatelumber.com/wp-content/uploads/3-sheet-stock-birch-red-oak-ply.png",
+    "description": "Plancha MDF de 15mm, ideal para mueblería"
+  },
+  {
+    "id": "PL002",
+    "name": "Plancha OSB 12mm",
+    "category": "Planchas",
+    "price": 329,
+    "stock": 200,
+    "image": "https://panelsandwich.ec/assets/libres/panel-sandwich-madera-friso-abeto.png",
+    "description": "Plancha OSB resistente al agua"
+  },
+  {
+    "id": "PL003",
+    "name": "Plancha Melamina Blanca 18mm",
+    "category": "Planchas",
+    "price": 680,
+    "stock": 80,
+    "image": "https://www.gardenstatelumber.com/wp-content/uploads/5-sheet-stock-pvc.png",
+    "description": "Melamina blanca de alta calidad"
+  },
+  {
+    "id": "TO001",
+    "name": "Tornillos Autorroscantes 4x40mm",
+    "category": "Tornillería",
+    "price": 12.5,
+    "stock": 500,
+    "image": "https://http2.mlstatic.com/D_NQ_NP_661319-MLV75568926453_042024-O.webp",
+    "description": "Caja x100 unidades"
+  },
+  {
+    "id": "TO002",
+    "name": "Tornillos Madera 6x60mm",
+    "category": "Tornillería",
+    "price": 18.75,
+    "stock": 300,
+    "image": "https://http2.mlstatic.com/D_NQ_NP_658143-MLA85742121373_062025-O.webp",
+    "description": "Tornillos galvanizados para madera"
+  },
+  {
+    "id": "TO003",
+    "name": "Tornillos Cabeza Plana 5x50mm",
+    "category": "Tornillería",
+    "price": 15.25,
+    "stock": 400,
+    "image": "https://http2.mlstatic.com/D_NQ_NP_743336-MLU74236303120_022024-O.webp",
+    "description": "Ideales para ensambles invisibles"
+  },
+  {
+    "id": "HE001",
+    "name": "Bisagras Piano 1.5m",
+    "category": "Herrajes",
+    "price": 25.8,
+    "stock": 120,
+    "image": "https://http2.mlstatic.com/D_NQ_NP_796183-MLA49460554716_032022-O.webp",
+    "description": "Bisagra continua de alta resistencia"
+  },
+  {
+    "id": "HE002",
+    "name": "Manijas Aluminio 128mm",
+    "category": "Herrajes",
+    "price": 8.9,
+    "stock": 250,
+    "image": "https://www.robertogentile.com.ar/wp-content/uploads/2021/08/12080824-1.jpg",
+    "description": "Manijas modernas color aluminio"
+  },
+  {
+    "id": "HE003",
+    "name": "Correderas Telescópicas 45cm",
+    "category": "Herrajes",
+    "price": 35.6,
+    "stock": 180,
+    "image": "https://http2.mlstatic.com/D_NQ_NP_829118-MLU74103344723_012024-O.webp",
+    "description": "Correderas de cierre suave"
+  },
+  {
+    "id": "HE004",
+    "name": "Bisagras Cazoleta 35mm",
+    "category": "Herrajes",
+    "price": 4.25,
+    "stock": 600,
+    "image": "https://acecontrol.com.ec/wp-content/uploads/2018/08/737-SA-1.jpg",
+    "description": "Bisagras estándar para puertas"
+  },
+  {
+    "id": "AD001",
+    "name": "Cola Blanca 1kg",
+    "category": "Adhesivos",
+    "price": 12.3,
+    "stock": 90,
+    "image": "https://promartecuador.vtexassets.com/arquivos/ids/197830/cola-blanca-litro-bioplast-23438_01.jpg?v=638403277403500000",
+    "description": "Adhesivo PVA de secado rápido"
+  },
+  {
+    "id": "AD002",
+    "name": "Silicona Transparente",
+    "category": "Adhesivos",
+    "price": 6.75,
+    "stock": 200,
+    "image": "https://kywiec.vtexassets.com/arquivos/ids/172354-800-auto?v=638388534590630000&width=800&height=auto&aspect=true",
+    "description": "Tubo de 280ml"
+  },
+  {
+    "id": "HE005",
+    "name": "Patas Regulables Cromadas",
+    "category": "Herrajes",
+    "price": 22.4,
+    "stock": 160,
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0RMGpQUgBvjIFtSxJSR70UWuRmyU_sJ-__w&s",
+    "description": "Set de 4 patas ajustables"
+  },
+  {
+    "id": "AC001",
+    "name": "Cantos PVC Blanco 22mm",
+    "category": "Accesorios",
+    "price": 3.8,
+    "stock": 300,
+    "image": "https://www.ferreteriabervar.com/cdn/shop/products/CANTO_PVC_ORANGE_BLANCO_22MM_CAPBCO22_800x.png?v=1660228144",
+    "description": "Rollo de 50 metros"
+  },
+  {
+    "id": "AC002",
+    "name": "Tacos Fischer 8mm",
+    "category": "Accesorios",
+    "price": 0.15,
+    "stock": 2000,
+    "image": "https://media.rs-online.com/image/upload/bo_1.5px_solid_white,b_auto,c_pad,dpr_2,f_auto,h_399,q_auto,w_710/c_pad,h_399,w_710/F4841568-01?pgw=1",
+    "description": "Tacos de expansión universales"
+  },
+  {
+    "id": "HE006",
+    "name": "Cerradura Cilíndrica",
+    "category": "Herrajes",
+    "price": 45.9,
+    "stock": 75,
+    "image": "https://segurex.com/wp-content/uploads/2023/06/145POLF.jpg",
+    "description": "Cerradura de seguridad con 3 llaves"
+  },
+  {
+    "id": "PL004",
+    "name": "Plancha Triplex 9mm",
+    "category": "Planchas",
+    "price": 28.6,
+    "stock": 120,
+    "image": "https://www.gardenstatelumber.com/wp-content/uploads/3-sheet-stock-birch-red-oak-ply.png",
+    "description": "Contrachapado de pino"
+  },
+  {
+    "id": "HE007",
+    "name": "Ruedas Giratorias con Freno",
+    "category": "Herrajes",
+    "price": 18.5,
+    "stock": 140,
+    "image": "https://es.rodasa.com/wp-content/uploads/401.jpg",
+    "description": "Set de 4 ruedas de 50mm"
+  },
+  {
+    "id": "AC003",
+    "name": "Lija Grano 120",
+    "category": "Accesorios",
+    "price": 2.25,
+    "stock": 400,
+    "image": "https://urrea.com/media/catalog/product/L/A/LAG120.jpeg?auto=webp&format=pjpg&fit=cover",
+    "description": "Pliego de lija para madera"
+  },
+  {
+    "id": "HE008",
+    "name": "Tirador Barra Inox 300mm",
+    "category": "Herrajes",
+    "price": 28.9,
+    "stock": 95,
+    "image": "https://media.falabella.com/sodimacCO/468828/w=1708,h=832,f=webp,fit=contain,q=85",
+    "description": "Tirador de acero inoxidable"
+  }
+]
