@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { NextResponse } from "next/server"
 import fs from "fs"
 import path from "path"
@@ -102,9 +104,10 @@ export async function GET(request: Request) {
       jsonData = JSON.parse(responseText)
       console.log("✅ JSON parseado correctamente")
     } catch (parseError) {
-      console.error("❌ Error parsing JSON:", parseError.message)
+      const err = parseError instanceof Error ? parseError : new Error(String(parseError))
+      console.error("❌ Error parsing JSON:", err.message)
       console.error("❌ Contenido problemático:", responseText.substring(0, 200))
-      throw new Error(`JSON inválido: ${parseError.message}`)
+      throw new Error(`JSON inválido: ${err.message}`)
     }
 
     // Validar que sea array
@@ -178,11 +181,12 @@ export async function GET(request: Request) {
       backupCreated: fs.existsSync(backupPath),
     })
   } catch (error) {
-    console.error("❌ ERROR EN SINCRONIZACIÓN:", error)
+    const err = error instanceof Error ? error : new Error(String(error))
+    console.error("❌ ERROR EN SINCRONIZACIÓN:", err)
     return NextResponse.json(
       {
         success: false,
-        error: `Error sincronizando inventario: ${error.message}`,
+        error: `Error sincronizando inventario: ${err.message}`,
         timestamp: new Date().toISOString(),
       },
       { status: 500 },
