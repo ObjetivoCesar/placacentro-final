@@ -85,6 +85,32 @@ export async function POST(request: NextRequest) {
       throw new Error("Error enviando pedido a sistema de procesamiento")
     }
 
+    // --- NUEVO: Registrar el pedido como mensaje en el chat ---
+    try {
+      const chatMessage = {
+        userId: userId,
+        message: `🛒 Pedido enviado:\n- Total: $${orderData.subtotal}\n- Productos: ${orderData.items.length}\n- Fecha: ${new Date().toLocaleString()}`,
+        cartData: orderData.items,
+        cartSummary: {
+          totalItems: orderData.items.length,
+          totalValue: orderData.subtotal,
+          products: orderData.items,
+        },
+        timestamp: new Date().toISOString(),
+        userAgent: orderData.userAgent || "ecommerce",
+        sessionInfo: orderData.sessionInfo || {},
+      }
+      await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(chatMessage),
+      })
+      console.log("✅ Pedido registrado en el chat del usuario")
+    } catch (chatError) {
+      console.error("❌ No se pudo registrar el pedido en el chat:", chatError)
+    }
+    // --- FIN NUEVO ---
+
     console.log("✅ PEDIDO ENVIADO EXITOSAMENTE")
     console.log("   - UserId procesado:", userId)
 
