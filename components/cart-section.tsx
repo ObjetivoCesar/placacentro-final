@@ -84,40 +84,49 @@ export default function CartSection() {
       console.log("📤 ENVIANDO PEDIDO DESDE CART SECTION:")
       console.log("   - UserId:", userId)
 
-      // DATOS CON USERID (IGUAL QUE EL CHAT)
-      const orderData = {
+      // NUEVO: Enviar pedido como mensaje al chat
+      const chatPayload = {
         userId: userId,
-        userIdentifier: userId,
-        whatsappNumber: whatsappNumber.replace(/\D/g, ""),
-        items: cart.map((item) => ({
+        type: "order",
+        message: `🛒 Pedido enviado:\n- Total: $${subtotal.toFixed(2)}\n- Productos: ${totalItems}\n- Fecha: ${new Date().toLocaleString()}`,
+        cartData: cart.map((item) => ({
           id: item.product.id,
           name: item.product.name,
           price: item.product.price,
           quantity: item.quantity,
           subtotal: item.product.price * item.quantity,
         })),
-        totalItems,
-        subtotal: subtotal.toFixed(2),
+        cartSummary: {
+          totalItems,
+          totalValue: subtotal,
+          products: cart.map((item) => ({
+            id: item.product.id,
+            name: item.product.name,
+            price: item.product.price,
+            quantity: item.quantity,
+            subtotal: item.product.price * item.quantity,
+          })),
+        },
+        whatsappNumber: whatsappNumber.replace(/\D/g, ""),
         timestamp: new Date().toISOString(),
-        type: "ecommerce-order",
-        source: "placacentro-ecommerce",
+        userAgent: typeof navigator !== "undefined" ? navigator.userAgent : "ecommerce",
+        sessionInfo: {},
       }
 
-      const response = await fetch("/api/submit-order", {
+      const response = await fetch("/api/chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(orderData),
+        body: JSON.stringify(chatPayload),
       })
 
       if (!response.ok) {
         throw new Error("Error al enviar el pedido")
       }
 
-      console.log("✅ Pedido enviado exitosamente desde CartSection")
+      console.log("✅ Pedido enviado exitosamente desde CartSection (por chat)")
       setSubmitMessage("¡Pedido enviado exitosamente! Pronto te contactaremos.")
-
       setTimeout(() => {
         clearCart()
         setWhatsappNumber("")
