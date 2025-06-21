@@ -86,6 +86,38 @@ export async function POST(request: NextRequest) {
       chat_user_id: chatData.userId,
     }
 
+    // Detectar si es un pedido (cartData presente y no vacío y type: 'order')
+    const isOrder = Array.isArray(chatData.cartData) && chatData.cartData.length > 0 && chatData.type === "order"
+
+    // Si es un pedido, crear un nuevo objeto para el webhook con la estructura de pedido
+    let finalWebhookData = webhookData
+    if (isOrder) {
+      finalWebhookData = {
+        userId: chatData.userId,
+        userIdentifier: chatData.userId,
+        user_id: chatData.userId,
+        source: "placacentro-ecommerce",
+        type: "new-order",
+        data: {
+          whatsappNumber: chatData.whatsappNumber || null,
+          items: chatData.cartData,
+          totalItems: chatData.cartData.length,
+          subtotal: chatData.cartSummary?.totalValue || 0,
+          timestamp: chatData.timestamp || new Date().toISOString(),
+          type: "ecommerce-order",
+          source: "placacentro-ecommerce",
+          userId: chatData.userId,
+          userIdentifier: chatData.userId,
+        },
+        folderName: `user_${chatData.userId}`,
+        orderSession: {
+          sessionId: `${chatData.userId}_${new Date().toISOString().split("T")[0]}`,
+          userIdentifier: chatData.userId,
+          date: new Date().toISOString().split("T")[0],
+        },
+      }
+    }
+
     console.log("📤 ENVIANDO A MAKE.COM:")
     console.log("   - Webhook URL:", webhookUrl.substring(0, 50) + "...")
     console.log("   - UserId confirmado:", webhookData.userId)
@@ -98,7 +130,7 @@ export async function POST(request: NextRequest) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(webhookData),
+      body: JSON.stringify(finalWebhookData),
     })
 
     console.log("📥 Respuesta de Make.com - Status:", webhookResponse.status)
@@ -126,7 +158,8 @@ export async function POST(request: NextRequest) {
           }
         }
       } catch (readError) {
-        console.log("⚠️ No se pudo leer respuesta del webhook:", readError.message)
+        const err = readError instanceof Error ? readError : new Error(String(readError))
+        console.log("⚠️ No se pudo leer respuesta del webhook:", err.message)
       }
     } else {
       console.log("⚠️ Webhook respondió con error:", webhookResponse.status)
@@ -147,14 +180,14 @@ export async function POST(request: NextRequest) {
       botResponse: botResponse,
     })
   } catch (error) {
-    console.error("❌ Error procesando mensaje de chat:", error)
-
+    const err = error instanceof Error ? error : new Error(String(error))
+    console.error("❌ Error procesando mensaje de chat:", err)
     return NextResponse.json({
       success: true,
       message: "Mensaje recibido con problemas técnicos",
       timestamp: new Date().toISOString(),
       botResponse: "Tu mensaje ha sido recibido. Un asesor se pondrá en contacto contigo pronto.",
-      error: error.message,
+      error: err.message,
     })
   }
 }
