@@ -64,7 +64,27 @@ export default function FloatingChat() {
     }
 
     window.addEventListener("openFloatingChat", handleOpenChat)
-    return () => window.removeEventListener("openFloatingChat", handleOpenChat)
+
+    // NUEVO: Escuchar evento para setear el input del chat desde el carrito
+    const handleSetChatInput = (e: Event) => {
+      const customEvent = e as CustomEvent<string>
+      if (typeof customEvent.detail === "string") {
+        setIsOpen(true)
+        setIsMinimized(false)
+        setInputMessage(customEvent.detail)
+        // Opcional: enfocar el input automáticamente
+        setTimeout(() => {
+          const input = document.querySelector<HTMLInputElement>("input[placeholder='Escribe tu mensaje...']")
+          input?.focus()
+        }, 100)
+      }
+    }
+    window.addEventListener("setChatInput", handleSetChatInput)
+
+    return () => {
+      window.removeEventListener("openFloatingChat", handleOpenChat)
+      window.removeEventListener("setChatInput", handleSetChatInput)
+    }
   }, [])
 
   const sendMessage = async () => {
@@ -108,9 +128,9 @@ export default function FloatingChat() {
 
       // Calcular resumen del carrito
       const cartSummary = {
-        totalItems: parsedCartData.reduce((sum, item) => sum + (item.quantity || 0), 0),
-        totalValue: parsedCartData.reduce((sum, item) => sum + (item.product?.price || 0) * (item.quantity || 0), 0),
-        products: parsedCartData.map((item) => ({
+        totalItems: (parsedCartData as Array<{ quantity: number }>).reduce((sum: number, item: any) => sum + (item.quantity || 0), 0),
+        totalValue: (parsedCartData as Array<{ product: { price: number }, quantity: number }>).reduce((sum: number, item: any) => sum + (item.product?.price || 0) * (item.quantity || 0), 0),
+        products: (parsedCartData as Array<{ product: { name: string, price: number }, quantity: number }>).map((item: any) => ({
           name: item.product?.name || "Producto",
           quantity: item.quantity || 0,
           price: item.product?.price || 0,
@@ -276,6 +296,7 @@ export default function FloatingChat() {
                     >
                       {message.isMarkdown ? (
                         <ReactMarkdown
+                          // @ts-expect-error: className no está en los tipos de ReactMarkdown pero sí es soportado
                           className="leading-relaxed prose prose-sm max-w-none"
                           components={{
                             p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
@@ -340,16 +361,14 @@ export default function FloatingChat() {
               <div className="p-3">
                 <div className="flex items-center space-x-2">
                   <div className="flex-1 relative">
-                    <Input
+                    <textarea
                       value={inputMessage}
                       onChange={(e) => setInputMessage(e.target.value)}
                       onKeyPress={handleKeyPress}
                       placeholder="Escribe tu mensaje..."
-                      className="w-full text-sm border-gray-200 rounded-full bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 pr-12"
+                      rows={4}
+                      className="w-full text-sm border-gray-200 rounded-2xl bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 pr-12 pl-4 py-2 resize-vertical min-h-[80px] max-h-[200px]"
                       style={{
-                        paddingLeft: "16px",
-                        paddingRight: "16px",
-                        height: "40px",
                         fontSize: "14px",
                         lineHeight: "20px",
                       }}

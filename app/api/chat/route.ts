@@ -98,6 +98,7 @@ export async function POST(request: NextRequest) {
         user_id: chatData.userId,
         source: "placacentro-ecommerce",
         type: "new-order",
+        // @ts-expect-error: 'data' es requerido por Make.com aunque no esté en el tipo base
         data: {
           whatsappNumber: chatData.whatsappNumber || null,
           items: chatData.cartData,
