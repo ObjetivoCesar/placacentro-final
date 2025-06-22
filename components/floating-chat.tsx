@@ -308,6 +308,15 @@ export default function FloatingChat() {
                             h1: ({ children }) => <h1 className="font-bold text-base mb-2">{children}</h1>,
                             h2: ({ children }) => <h2 className="font-bold text-sm mb-1">{children}</h2>,
                             h3: ({ children }) => <h3 className="font-semibold text-sm mb-1">{children}</h3>,
+                            // Personalización para imágenes en markdown
+                            img: ({ src, alt }) => (
+                              <img
+                                src={src ?? ''}
+                                alt={alt ?? ''}
+                                className="rounded-lg max-w-full h-auto my-2 border border-gray-200 shadow"
+                                style={{ maxHeight: 200 }}
+                              />
+                            ),
                           }}
                         >
                           {message.content}
