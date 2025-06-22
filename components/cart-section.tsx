@@ -66,6 +66,17 @@ export default function CartSection() {
     return cleanNumber.length >= 10 && cleanNumber.length <= 15
   }
 
+  // Genera un resumen plano del pedido para el chat
+  function generarResumenPedido(cart) {
+    let resumen = ""
+    cart.forEach((item) => {
+      resumen += `${item.product.name}\n${item.product.description || ""}\n$${item.product.price.toFixed(2)}\n\n${item.quantity}\n\n$${(item.product.price * item.quantity).toFixed(2)}\n\n`
+    })
+    const total = cart.reduce((acc, item) => acc + item.product.price * item.quantity, 0)
+    resumen += `\nTOTAL: $${total.toFixed(2)}`
+    return resumen.trim()
+  }
+
   const handleSubmitOrder = async () => {
     if (cart.length === 0) {
       setSubmitMessage("El carrito está vacío")
@@ -77,67 +88,11 @@ export default function CartSection() {
       return
     }
 
-    setIsSubmitting(true)
-    setSubmitMessage("")
-
-    try {
-      console.log("📤 ENVIANDO PEDIDO DESDE CART SECTION:")
-      console.log("   - UserId:", userId)
-
-      // NUEVO: Enviar pedido como mensaje al chat
-      const chatPayload = {
-        userId: userId,
-        type: "order",
-        message: `🛒 Pedido enviado:\n- Total: $${subtotal.toFixed(2)}\n- Productos: ${totalItems}\n- Fecha: ${new Date().toLocaleString()}`,
-        cartData: cart.map((item) => ({
-          id: item.product.id,
-          name: item.product.name,
-          price: item.product.price,
-          quantity: item.quantity,
-          subtotal: item.product.price * item.quantity,
-        })),
-        cartSummary: {
-          totalItems,
-          totalValue: subtotal,
-          products: cart.map((item) => ({
-            id: item.product.id,
-            name: item.product.name,
-            price: item.product.price,
-            quantity: item.quantity,
-            subtotal: item.product.price * item.quantity,
-          })),
-        },
-        whatsappNumber: whatsappNumber.replace(/\D/g, ""),
-        timestamp: new Date().toISOString(),
-        userAgent: typeof navigator !== "undefined" ? navigator.userAgent : "ecommerce",
-        sessionInfo: {},
-      }
-
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(chatPayload),
-      })
-
-      if (!response.ok) {
-        throw new Error("Error al enviar el pedido")
-      }
-
-      console.log("✅ Pedido enviado exitosamente desde CartSection (por chat)")
-      setSubmitMessage("¡Pedido enviado exitosamente! Pronto te contactaremos.")
-      setTimeout(() => {
-        clearCart()
-        setWhatsappNumber("")
-        setSubmitMessage("")
-      }, 2000)
-    } catch (error) {
-      console.error("❌ Error enviando pedido:", error)
-      setSubmitMessage("Error al enviar el pedido. Por favor intenta nuevamente.")
-    } finally {
-      setIsSubmitting(false)
-    }
+    // Generar resumen y pasarlo al chat flotante
+    const resumen = generarResumenPedido(cart)
+    window.dispatchEvent(new CustomEvent("setChatInput", { detail: resumen }))
+    window.dispatchEvent(new Event("openFloatingChat"))
+    setSubmitMessage("El resumen de tu pedido ha sido copiado al chat. Revísalo y envíalo para continuar.")
   }
 
   return (
