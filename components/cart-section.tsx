@@ -67,12 +67,12 @@ export default function CartSection() {
   }
 
   // Genera un resumen plano del pedido para el chat
-  function generarResumenPedido(cart) {
+  function generarResumenPedido(cart: CartItem[]): string {
     let resumen = ""
-    cart.forEach((item) => {
+    cart.forEach((item: CartItem) => {
       resumen += `${item.product.name}\n${item.product.description || ""}\n$${item.product.price.toFixed(2)}\n\n${item.quantity}\n\n$${(item.product.price * item.quantity).toFixed(2)}\n\n`
     })
-    const total = cart.reduce((acc, item) => acc + item.product.price * item.quantity, 0)
+    const total = cart.reduce((acc: number, item: CartItem) => acc + item.product.price * item.quantity, 0)
     resumen += `\nTOTAL: $${total.toFixed(2)}`
     return resumen.trim()
   }

@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description:
     "Sistema digital de generación de pedidos para maderera. Catálogo de productos para carpinteros y profesionales de la construcción.",
   keywords: "maderera, planchas, tornillos, herrajes, carpintería, Loja, Ecuador",
-    generator: 'v0.dev'
+  generator: 'v0.dev'
 }
 
 export default function RootLayout({
@@ -19,8 +19,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="es">
-      <body className={inter.className}>{children}</body>
+    <html lang="es" className="dark">
+      <body className={`${inter.className} bg-gradient-to-br from-[#18181b] via-[#23232a] to-[#18181b] text-white min-h-screen`}>{children}</body>
     </html>
   )
 }
