@@ -42,20 +42,40 @@ export default function MainApp() {
   const [activeSection, setActiveSection] = useState<"home" | "optimization" | "ecommerce" | "cart">("home")
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-[#18181b] via-[#23232a] to-[#18181b] pb-20">
+      {/* HERO: Video ancho completo y título */}
+      <section className="w-full max-w-5xl mx-auto mt-8 mb-8">
+        <div className="rounded-3xl overflow-hidden shadow-2xl border border-[#23232a] bg-[#18181b]">
+          <div style={{position:'relative',paddingTop:'56.25%'}}>
+            <iframe
+              src="https://iframe.mediadelivery.net/embed/455329/9d4dc6d4-034c-4bf8-8477-138ffc896ab2?autoplay=true&loop=true&muted=true&preload=true&responsive=true"
+              loading="lazy"
+              style={{border:0,position:'absolute',top:0,left:0,height:'100%',width:'100%'}}
+              allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;"
+              allowFullScreen
+              title="Sistema de Mensajería Objetivo"
+            ></iframe>
+          </div>
+        </div>
+        <div className="text-center mt-8">
+          <h1 className="text-3xl md:text-5xl font-bold text-white mb-2 drop-shadow-lg">Sistema de Mensajería Objetivo</h1>
+          <h2 className="text-lg md:text-2xl text-orange-400 font-medium">Aplicado a la atención y optimización de empresas</h2>
+        </div>
+      </section>
+
       {/* Header minimalista con branding */}
-      <header className="bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-40">
+      <header className="bg-[#23232a]/80 backdrop-blur-md border-b border-[#23232a] sticky top-0 z-40 shadow-lg">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-center">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center">
-                <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
-                  <div className="w-3 h-3 bg-green-600 rounded-full"></div>
+              <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center shadow-lg">
+                <div className="w-6 h-6 bg-[#23232a] rounded-full flex items-center justify-center">
+                  <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
                 </div>
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">Placacentro</h1>
-                <p className="text-xs text-gray-500">Masisa Decomaderas</p>
+                <h1 className="text-xl font-bold text-white">Placacentro</h1>
+                <p className="text-xs text-orange-400">Masisa Decomaderas</p>
               </div>
             </div>
           </div>
@@ -70,8 +90,10 @@ export default function MainApp() {
             <section className="container mx-auto px-6 py-12">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
                 {/* Optimización de Cortes */}
-                <div className="group cursor-pointer" onClick={() => setActiveSection("optimization")}>
-                  <div className="relative bg-gradient-to-br from-blue-500 to-blue-700 rounded-3xl p-8 text-white transform transition-all duration-300 hover:scale-105 hover:shadow-2xl">
+                <div className="group cursor-pointer relative" onClick={() => setActiveSection("optimization")}> 
+                  {/* Halo decorativo */}
+                  <div className="absolute -inset-2 z-0 rounded-3xl bg-gradient-to-br from-orange-400/30 to-orange-600/10 blur-xl opacity-80 group-hover:opacity-100 transition-all"></div>
+                  <div className="relative bg-gradient-to-br from-blue-500 to-blue-700 rounded-3xl p-8 text-white transform transition-all duration-300 hover:scale-105 hover:shadow-2xl z-10">
                     <div className="absolute top-6 right-6 w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
                       <Scissors className="h-6 w-6 text-white" />
                     </div>
@@ -110,8 +132,10 @@ export default function MainApp() {
                 </div>
 
                 {/* Accesorios de Carpintería */}
-                <div className="group cursor-pointer" onClick={() => setActiveSection("ecommerce")}>
-                  <div className="relative bg-gradient-to-br from-green-500 to-green-700 rounded-3xl p-8 text-white transform transition-all duration-300 hover:scale-105 hover:shadow-2xl">
+                <div className="group cursor-pointer relative" onClick={() => setActiveSection("ecommerce")}> 
+                  {/* Halo decorativo */}
+                  <div className="absolute -inset-2 z-0 rounded-3xl bg-gradient-to-br from-orange-400/30 to-orange-600/10 blur-xl opacity-80 group-hover:opacity-100 transition-all"></div>
+                  <div className="relative bg-gradient-to-br from-green-500 to-green-700 rounded-3xl p-8 text-white transform transition-all duration-300 hover:scale-105 hover:shadow-2xl z-10">
                     <div className="absolute top-6 right-6 w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
                       <Wrench className="h-6 w-6 text-white" />
                     </div>

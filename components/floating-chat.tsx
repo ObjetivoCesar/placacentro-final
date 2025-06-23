@@ -240,7 +240,7 @@ export default function FloatingChat() {
   }
 
   return (
-    <div className="fixed bottom-24 right-6 z-40">
+    <div className="fixed bottom-24 right-6 z-[100]">
       <Card className={`w-80 shadow-2xl transition-all duration-300 ${isMinimized ? "h-14" : "h-[460px]"}`}>
         <CardHeader className="p-4 bg-green-600 text-white rounded-t-lg">
           <div className="flex items-center justify-between">
