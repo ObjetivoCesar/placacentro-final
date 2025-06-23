@@ -240,7 +240,7 @@ export default function FloatingChat() {
   }
 
   return (
-    <div className="fixed bottom-24 right-6 z-[100]">
+    <div className="fixed bottom-32 right-6 z-[120]">
       <Card className={`w-80 shadow-2xl transition-all duration-300 ${isMinimized ? "h-14" : "h-[460px]"}`}>
         <CardHeader className="p-4 bg-green-600 text-white rounded-t-lg">
           <div className="flex items-center justify-between">
@@ -366,7 +366,7 @@ export default function FloatingChat() {
             </div>
 
             {/* Input Area - CORREGIDO: Styling mejorado para evitar superposiciones */}
-            <div className="border-t border-gray-100 bg-white">
+            <div className="border-t border-gray-100 bg-[#23232a]">
               <div className="p-3">
                 <div className="flex items-center space-x-2">
                   <div className="flex-1 relative">
@@ -376,7 +376,7 @@ export default function FloatingChat() {
                       onKeyPress={handleKeyPress}
                       placeholder="Escribe tu mensaje..."
                       rows={4}
-                      className="w-full text-sm border-gray-200 rounded-2xl bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 pr-12 pl-4 py-2 resize-vertical min-h-[80px] max-h-[200px]"
+                      className="w-full text-sm border-gray-700 rounded-2xl bg-[#23232a] text-white focus:ring-2 focus:ring-green-500 focus:border-green-500 pr-12 pl-4 py-2 resize-vertical min-h-[80px] max-h-[200px] placeholder:text-gray-400"
                       style={{
                         fontSize: "14px",
                         lineHeight: "20px",
