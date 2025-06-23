@@ -71,7 +71,7 @@ export default function HomePage() {
         onClick={() => setHasEntered(true)}
         className="bg-orange-500 hover:bg-orange-600 text-white px-10 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
       >
-        Get Started
+        Ingresar
       </Button>
     </div>
   )

@@ -24,14 +24,29 @@ interface Message {
 export default function FloatingChat() {
   const [isOpen, setIsOpen] = useState(false)
   const [isMinimized, setIsMinimized] = useState(false)
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "1",
-      type: "bot",
-      content: "¡Hola! Soy tu asistente virtual de Placacentro. ¿En qué puedo ayudarte?",
-      timestamp: new Date(),
-    },
-  ])
+  const [messages, setMessages] = useState<Message[]>(() => {
+    // Recuperar historial del localStorage
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('placacentro-chat-history')
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved)
+          // Convertir timestamps a Date
+          return parsed.map((msg: any) => ({ ...msg, timestamp: new Date(msg.timestamp) }))
+        } catch {
+          // Si hay error, usar mensaje por defecto
+        }
+      }
+    }
+    return [
+      {
+        id: "1",
+        type: "bot",
+        content: "¡Hola! Soy Viviana de Placacentro. ¿En qué puedo ayudarte?",
+        timestamp: new Date(),
+      },
+    ]
+  })
   const [inputMessage, setInputMessage] = useState("")
   const [isTyping, setIsTyping] = useState(false)
   const [userId, setUserId] = useState<string>("")
@@ -234,6 +249,13 @@ export default function FloatingChat() {
       sendMessage()
     }
   }
+
+  useEffect(() => {
+    // Guardar historial en localStorage cada vez que cambian los mensajes
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('placacentro-chat-history', JSON.stringify(messages))
+    }
+  }, [messages])
 
   if (!isOpen) {
     return null
