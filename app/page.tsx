@@ -60,10 +60,10 @@ export default function HomePage() {
           </div>
         </div>
         <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 text-center drop-shadow-lg">
-          Manage your daily tasks
+          Atención al Cliente
         </h1>
         <p className="text-orange-400 text-base md:text-lg font-medium text-center mb-6 max-w-xs">
-          Team and Project management with solution providing App
+          Proyecto Placacentro Decomaderas
         </p>
       </div>
       {/* Botón de entrada */}
