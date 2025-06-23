@@ -41,8 +41,14 @@ export default function HomePage() {
       {/* Esfera animada o imagen decorativa */}
       <div className="mb-10 flex flex-col items-center">
         <div className="relative w-40 h-40 flex items-center justify-center mb-6">
-          {/* Media luna decorativa detrás del botón */}
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-24 bg-gradient-to-tr from-orange-500/30 to-orange-300/10 rounded-b-full blur-2xl z-0" style={{zIndex:0}} />
+          {/* Media luna decorativa detrás del botón, desplazada hacia la derecha */}
+          <div
+            className="absolute top-1/2 left-1/2 w-48 h-24 bg-gradient-to-tr from-orange-500/30 to-orange-300/10 rounded-b-full blur-2xl z-0"
+            style={{
+              zIndex: 0,
+              transform: 'translate(-10%, -50%)', // Desplaza la media luna hacia la derecha
+            }}
+          />
           <div className="w-40 h-40 rounded-full bg-gradient-to-tr from-orange-500/80 to-orange-300/40 shadow-2xl flex items-center justify-center animate-pulse z-10">
             <Image
               src="/images/logo-simple.png"
