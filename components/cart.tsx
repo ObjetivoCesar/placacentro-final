@@ -10,6 +10,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import Image from "next/image"
 import type { CartItem } from "@/types"
+import { getOrCreateBrowserUserId } from "@/lib/utils"
 
 interface CartProps {
   isOpen: boolean
@@ -32,13 +33,10 @@ export default function Cart({ isOpen, onClose, cart, onUpdateQuantity, onRemove
 
   // OBTENER USERID (IGUAL QUE EL CHAT)
   useEffect(() => {
-    const userIdentifier = localStorage.getItem("placacentro-user-id")
-    if (userIdentifier) {
-      setUserId(userIdentifier)
-      console.log("🆔 Cart - UserId cargado:", userIdentifier)
-    } else {
-      console.log("⚠️ Cart - No se encontró userId en localStorage")
-    }
+    // Usar el método universal para obtener el userId
+    const userIdentifier = getOrCreateBrowserUserId()
+    setUserId(userIdentifier)
+    console.log("🆔 Cart - UserId universal:", userIdentifier)
   }, [])
 
   // Calcular totales

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import ReactMarkdown from "react-markdown"
+import { getOrCreateBrowserUserId } from "@/lib/utils"
 
 interface Message {
   id: string
@@ -61,16 +62,10 @@ export default function FloatingChat() {
   }, [messages])
 
   useEffect(() => {
-    // Generar o recuperar ID único del usuario
-    let userIdentifier = localStorage.getItem("placacentro-user-id")
-    if (!userIdentifier) {
-      userIdentifier = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-      localStorage.setItem("placacentro-user-id", userIdentifier)
-      console.log("🆔 Nuevo userId generado:", userIdentifier)
-    } else {
-      console.log("🆔 UserId recuperado:", userIdentifier)
-    }
+    // Usar el método universal para obtener el userId
+    const userIdentifier = getOrCreateBrowserUserId()
     setUserId(userIdentifier)
+    console.log("🆔 UserId universal:", userIdentifier)
 
     // Escuchar evento para abrir el chat desde el footer
     const handleOpenChat = () => {

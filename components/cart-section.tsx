@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import Image from "next/image"
 import type { CartItem } from "@/types"
+import { getOrCreateBrowserUserId } from "@/lib/utils"
 
 /**
  * COMPONENTE: Sección dedicada del carrito
@@ -23,12 +24,10 @@ export default function CartSection() {
 
   useEffect(() => {
     loadCart()
-    // OBTENER USERID (IGUAL QUE EL CHAT)
-    const userIdentifier = localStorage.getItem("placacentro-user-id")
-    if (userIdentifier) {
-      setUserId(userIdentifier)
-      console.log("🆔 CartSection - UserId cargado:", userIdentifier)
-    }
+    // Usar el método universal para obtener el userId
+    const userIdentifier = getOrCreateBrowserUserId()
+    setUserId(userIdentifier)
+    console.log("🆔 CartSection - UserId universal:", userIdentifier)
     // Escuchar cambios en localStorage para sincronizar carrito
     const handleStorage = () => loadCart()
     window.addEventListener("storage", handleStorage)
