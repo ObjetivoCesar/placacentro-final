@@ -3,7 +3,6 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
-import Link from "next/link"
 import MainApp from "@/components/main-app"
 
 /**
@@ -74,16 +73,8 @@ export default function HomePage() {
           onClick={() => setHasEntered(true)}
           className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
         >
-          Ecommerce
+          Ingresar
         </Button>
-        
-        <Link href="/cotizaciones">
-          <Button
-            className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
-          >
-            Cotizaciones
-          </Button>
-        </Link>
       </div>
     </div>
   )

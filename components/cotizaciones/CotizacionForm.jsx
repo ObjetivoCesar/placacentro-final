@@ -27,7 +27,7 @@ const CotizacionForm = () => {
     telefono: '',
     direccionTaller: '',
     entrega: 'domicilio',
-    fecha: new Date().toISOString().slice(0, 10)
+    sucursal: '' // Nuevo campo para sucursal si aplica
   })
 
   // Estados para medidas
@@ -43,10 +43,6 @@ const CotizacionForm = () => {
   const [medidas, setMedidas] = useState([])
   const [imagenes, setImagenes] = useState([])
   const [isLoading, setIsLoading] = useState(false)
-
-  // Estados para mostrar modales de grabador y cámara
-  const [showVoiceRecorder, setShowVoiceRecorder] = useState(false)
-  const [showCameraCapture, setShowCameraCapture] = useState(false)
 
   // Opciones para los selectores
   const tiposPlanchas = ['MDF', 'Melamina', 'Terciado', 'Aglomerado']
@@ -169,21 +165,20 @@ const CotizacionForm = () => {
 
     try {
       const userId = getOrCreateBrowserUserId()
+      const fechaActual = new Date().toISOString()
       // Formatear mensaje para el chat
-      const cotizacionMensaje = `📝 Nueva cotización enviada:\n- Tipo de plancha: ${formData.tipoPlancha}\n- Color: ${formData.color}\n- Vendedora: ${formData.vendedora}\n- Medidas:\n${medidas.map(m => `  • ${m.descripcion} (${m.cantidad} piezas)`).join("\n")}\n- Comentarios: ${formData.comentarios || "Sin comentarios"}`
+      const cotizacionMensaje = `📝 Nueva cotización enviada:\n- Tipo de plancha: ${formData.tipoPlancha}\n- Color: ${formData.color}\n- Vendedora: ${formData.vendedora}\n- Entrega: ${formData.entrega === 'sucursal' ? `En Sucursal (${formData.sucursal === 'valle' ? 'Valle' : 'Centro'})` : 'A Domicilio'}\n- Medidas:\n${medidas.map(m => `  • ${m.descripcion} (${m.cantidad} piezas)`).join("\n")}\n- Comentarios: ${formData.comentarios || "Sin comentarios"}`
       const payload = {
         userId,
         message: cotizacionMensaje,
-        timestamp: new Date().toISOString(),
+        timestamp: fechaActual,
         source: "placacentro-cotizacion-form",
         cotizacion: {
-          tipoPlancha: formData.tipoPlancha,
-          color: formData.color,
-          vendedora: formData.vendedora,
-          medidas: medidas,
-          imagenes: imagenes,
-          comentarios: formData.comentarios,
-        },
+          ...formData,
+          fecha: fechaActual,
+          medidas,
+          imagenes
+        }
       }
 
       // Enviar al chat (NO al webhook de Make)
@@ -206,7 +201,7 @@ const CotizacionForm = () => {
           telefono: '',
           direccionTaller: '',
           entrega: 'domicilio',
-          fecha: new Date().toISOString().slice(0, 10)
+          sucursal: ''
         })
         setMedidas([])
         setImagenes([])
@@ -236,7 +231,6 @@ const CotizacionForm = () => {
       const combinadas = [...prevMedidas, ...nuevas]
       return combinadas.map((m, i) => ({ ...m, linea: i + 1 }))
     })
-    setShowVoiceRecorder(false)
     toast.success(`Se agregaron ${medidasVoz.length} medidas desde el audio.`)
   }
   // Función para agregar medidas desde análisis de imagen
@@ -255,7 +249,6 @@ const CotizacionForm = () => {
       const combinadas = [...prevMedidas, ...nuevas]
       return combinadas.map((m, i) => ({ ...m, linea: i + 1 }))
     })
-    setShowCameraCapture(false)
     toast.success(`Se agregaron ${medidasImg.length} medidas desde la imagen.`)
   }
 
@@ -263,24 +256,18 @@ const CotizacionForm = () => {
   const MedidasVisual = () => (
     <div className="flex flex-col md:flex-row justify-center items-center gap-4 mb-6">
       <div className="flex flex-col items-center flex-1">
-        <button
-          type="button"
-          className="rounded-full bg-blue-600 w-24 h-24 flex items-center justify-center mb-2 focus:outline-none"
-          onClick={() => setShowVoiceRecorder(true)}
-        >
-          <Mic className="w-10 h-10 text-white" />
-        </button>
+        <VoiceRecorder
+          onTranscription={manejarTranscripcionVoz}
+          onClose={() => {}}
+        />
         <div className="font-bold text-center text-white">Dictar Medidas</div>
         <div className="text-sm text-gray-300 text-center">Haz clic para grabar medidas</div>
       </div>
       <div className="flex flex-col items-center flex-1">
-        <button
-          type="button"
-          className="rounded-full bg-blue-600 w-24 h-24 flex items-center justify-center mb-2 focus:outline-none"
-          onClick={() => setShowCameraCapture(true)}
-        >
-          <Camera className="w-10 h-10 text-white" />
-        </button>
+        <CameraCapture
+          onImageAnalysis={manejarAnalisisImagen}
+          onClose={() => {}}
+        />
         <div className="font-bold text-center text-white">Foto de Medidas</div>
         <div className="text-sm text-gray-300 text-center">Tomar foto de medidas<br/>Requiere HTTPS y permisos</div>
       </div>
@@ -356,7 +343,7 @@ const CotizacionForm = () => {
 
             <div>
               <Label htmlFor="entrega">Entrega</Label>
-              <Select value={formData.entrega} onValueChange={value => setFormData({...formData, entrega: value})}>
+              <Select value={formData.entrega} onValueChange={value => setFormData({...formData, entrega: value, sucursal: value === 'sucursal' ? formData.sucursal : ''})}>
                 <SelectTrigger>
                   <SelectValue placeholder="Seleccione entrega" />
                 </SelectTrigger>
@@ -367,10 +354,20 @@ const CotizacionForm = () => {
               </Select>
             </div>
 
-            <div>
-              <Label htmlFor="fecha">Fecha</Label>
-              <Input type="date" value={formData.fecha} onChange={e => setFormData({...formData, fecha: e.target.value})} />
-            </div>
+            {formData.entrega === 'sucursal' && (
+              <div>
+                <Label htmlFor="sucursal">Sucursal</Label>
+                <Select value={formData.sucursal} onValueChange={value => setFormData({...formData, sucursal: value})}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccione sucursal" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="valle">Sucursal Valle</SelectItem>
+                    <SelectItem value="centro">Sucursal Centro</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -504,7 +501,7 @@ const CotizacionForm = () => {
                 <p><span className="font-medium">Teléfono:</span> {formData.telefono || <span className="text-gray-400">-</span>}</p>
                 <p><span className="font-medium">Dirección:</span> {formData.direccionTaller || <span className="text-gray-400">-</span>}</p>
                 <p><span className="font-medium">Entrega:</span> {formData.entrega === 'domicilio' ? <b>A Domicilio</b> : <b>En Sucursal</b>}</p>
-                <p><span className="font-medium">Fecha:</span> <b>{formData.fecha ? new Date(formData.fecha).toLocaleDateString('es-ES') : <span className="text-gray-400">-</span>}</b></p>
+                <p><span className="font-medium">Fecha:</span> <b>{new Date().toLocaleDateString('es-ES')}</b></p>
               </div>
             </div>
 
@@ -556,20 +553,6 @@ const CotizacionForm = () => {
           </CardContent>
         </Card>
       </div>
-
-      {/* Modales para grabador de voz y cámara */}
-      {showVoiceRecorder && (
-        <VoiceRecorder
-          onTranscription={manejarTranscripcionVoz}
-          onClose={() => setShowVoiceRecorder(false)}
-        />
-      )}
-      {showCameraCapture && (
-        <CameraCapture
-          onImageAnalysis={manejarAnalisisImagen}
-          onClose={() => setShowCameraCapture(false)}
-        />
-      )}
     </div>
   )
 }
