@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
+import Link from "next/link"
 import MainApp from "@/components/main-app"
 
 /**
@@ -11,19 +12,19 @@ import MainApp from "@/components/main-app"
  * FUNCIONALIDAD:
  * - Portada moderna y oscura con fondo degradado
  * - Logo centrado con acentos naranjas
- * - Botón destacado para entrar a la aplicación
+ * - Botones para acceder a diferentes secciones
  * - Transición suave entre landing y app principal
  *
  * DISEÑO:
  * - Fondo degradado oscuro
  * - Tipografía moderna y limpia
- * - Botón naranja consistente con branding
+ * - Botones naranjas consistentes con branding
  * - Responsive para todos los dispositivos
  *
  * FLUJO:
  * 1. Usuario ve la portada
- * 2. Hace clic en "Get Started"
- * 3. Se carga la aplicación principal (MainApp)
+ * 2. Puede elegir entre "Ecommerce" o "Cotizaciones"
+ * 3. Se carga la aplicación correspondiente
  *
  * ASSETS:
  * - /images/logo-simple.png: Logo oficial con texto integrado
@@ -60,19 +61,31 @@ export default function HomePage() {
           </div>
         </div>
         <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 text-center drop-shadow-lg">
-          Atención al Cliente
+          Placacentro Software
         </h1>
         <p className="text-orange-400 text-base md:text-lg font-medium text-center mb-6 max-w-xs">
           Proyecto Placacentro Decomaderas
         </p>
       </div>
-      {/* Botón de entrada */}
-      <Button
-        onClick={() => setHasEntered(true)}
-        className="bg-orange-500 hover:bg-orange-600 text-white px-10 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
-      >
-        Ingresar
-      </Button>
+      
+      {/* Botones de navegación */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <Button
+          onClick={() => setHasEntered(true)}
+          className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+        >
+          Ecommerce
+        </Button>
+        
+        <Link href="/cotizaciones">
+          <Button
+            className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+          >
+            Cotizaciones
+          </Button>
+        </Link>
+      </div>
     </div>
   )
 }
+
