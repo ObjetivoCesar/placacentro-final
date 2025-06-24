@@ -44,6 +44,10 @@ const CotizacionForm = () => {
   const [imagenes, setImagenes] = useState([])
   const [isLoading, setIsLoading] = useState(false)
 
+  // Estados para mostrar modales de grabador y cámara
+  const [showVoiceRecorder, setShowVoiceRecorder] = useState(false)
+  const [showCameraCapture, setShowCameraCapture] = useState(false)
+
   // Opciones para los selectores
   const tiposPlanchas = ['MDF', 'Melamina', 'Terciado', 'Aglomerado']
   const colores = ['Blanco', 'Negro', 'Madera Natural', 'Cerezo', 'Nogal', 'Haya']
@@ -216,29 +220,69 @@ const CotizacionForm = () => {
     }
   }
 
+  // Función para agregar medidas desde transcripción de voz
+  const manejarTranscripcionVoz = (medidasVoz, texto) => {
+    setMedidas(prevMedidas => {
+      const nuevas = medidasVoz.map(medida => ({
+        linea: prevMedidas.length + 1,
+        cantidad: medida.cantidad,
+        largo: medida.largo.toString(),
+        ancho: medida.ancho.toString(),
+        perforacion: medida.perforacion,
+        tipoBordo: medida.tipoBordo,
+        cantoBordo: medida.cantoBordo,
+        descripcion: `Cant: ${medida.cantidad}, L${medida.largo}, A${medida.ancho}, P-${medida.perforacion}, Bordo-${bordoTexto[medida.tipoBordo]}, B-${medida.cantoBordo === 'canto-suave' ? 'Suave' : 'Duro'}`
+      }))
+      const combinadas = [...prevMedidas, ...nuevas]
+      return combinadas.map((m, i) => ({ ...m, linea: i + 1 }))
+    })
+    setShowVoiceRecorder(false)
+    toast.success(`Se agregaron ${medidasVoz.length} medidas desde el audio.`)
+  }
+  // Función para agregar medidas desde análisis de imagen
+  const manejarAnalisisImagen = (medidasImg, texto) => {
+    setMedidas(prevMedidas => {
+      const nuevas = medidasImg.map(medida => ({
+        linea: prevMedidas.length + 1,
+        cantidad: medida.cantidad,
+        largo: medida.largo.toString(),
+        ancho: medida.ancho.toString(),
+        perforacion: medida.perforacion,
+        tipoBordo: medida.tipoBordo,
+        cantoBordo: medida.cantoBordo,
+        descripcion: `Cant: ${medida.cantidad}, L${medida.largo}, A${medida.ancho}, P-${medida.perforacion}, Bordo-${bordoTexto[medida.tipoBordo]}, B-${medida.cantoBordo === 'canto-suave' ? 'Suave' : 'Duro'}`
+      }))
+      const combinadas = [...prevMedidas, ...nuevas]
+      return combinadas.map((m, i) => ({ ...m, linea: i + 1 }))
+    })
+    setShowCameraCapture(false)
+    toast.success(`Se agregaron ${medidasImg.length} medidas desde la imagen.`)
+  }
+
   // Panel visual de ingreso de medidas
   const MedidasVisual = () => (
     <div className="flex flex-col md:flex-row justify-center items-center gap-4 mb-6">
       <div className="flex flex-col items-center flex-1">
-        <button type="button" className="rounded-full bg-blue-600 w-24 h-24 flex items-center justify-center mb-2 focus:outline-none">
+        <button
+          type="button"
+          className="rounded-full bg-blue-600 w-24 h-24 flex items-center justify-center mb-2 focus:outline-none"
+          onClick={() => setShowVoiceRecorder(true)}
+        >
           <Mic className="w-10 h-10 text-white" />
         </button>
         <div className="font-bold text-center text-white">Dictar Medidas</div>
         <div className="text-sm text-gray-300 text-center">Haz clic para grabar medidas</div>
       </div>
       <div className="flex flex-col items-center flex-1">
-        <button type="button" className="rounded-full bg-blue-600 w-24 h-24 flex items-center justify-center mb-2 focus:outline-none">
+        <button
+          type="button"
+          className="rounded-full bg-blue-600 w-24 h-24 flex items-center justify-center mb-2 focus:outline-none"
+          onClick={() => setShowCameraCapture(true)}
+        >
           <Camera className="w-10 h-10 text-white" />
         </button>
         <div className="font-bold text-center text-white">Foto de Medidas</div>
         <div className="text-sm text-gray-300 text-center">Tomar foto de medidas<br/>Requiere HTTPS y permisos</div>
-      </div>
-      <div className="flex flex-col items-center flex-1">
-        <button type="button" className="rounded-full bg-green-500 w-24 h-24 flex items-center justify-center mb-2 focus:outline-none">
-          <Upload className="w-10 h-10 text-white" />
-        </button>
-        <div className="font-bold text-center text-white">Subir Foto</div>
-        <div className="text-sm text-gray-300 text-center">Subir foto de medidas<br/>Formatos: JPG, PNG, WebP (máx. 10MB)</div>
       </div>
     </div>
   )
@@ -338,7 +382,63 @@ const CotizacionForm = () => {
           <CardContent>
             <div className="flex flex-col items-center justify-center">
               <MedidasVisual />
-              {/* Fila de botones pequeños eliminada para dejar solo la fila superior de botones grandes */}
+              {/* Separador */}
+              <div className="flex items-center space-x-4 my-4">
+                <hr className="flex-1 border-gray-600" />
+                <span className="text-sm text-gray-400">o ingresa manualmente</span>
+                <hr className="flex-1 border-gray-600" />
+              </div>
+              {/* Formulario de ingreso manual de medidas */}
+              <form className="w-full max-w-2xl grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="largo">Largo (cm)</Label>
+                  <Input type="number" value={medidaActual.largo} onChange={e => setMedidaActual({...medidaActual, largo: e.target.value})} placeholder="Ej: 120" />
+                </div>
+                <div>
+                  <Label htmlFor="ancho">Ancho (cm)</Label>
+                  <Input type="number" value={medidaActual.ancho} onChange={e => setMedidaActual({...medidaActual, ancho: e.target.value})} placeholder="Ej: 60" />
+                </div>
+                <div>
+                  <Label htmlFor="cantidad">Cantidad</Label>
+                  <Input type="number" min="1" value={medidaActual.cantidad} onChange={e => setMedidaActual({...medidaActual, cantidad: e.target.value})} />
+                </div>
+                <div>
+                  <Label htmlFor="perforacion">Perforación</Label>
+                  <Select value={medidaActual.perforacion} onValueChange={value => setMedidaActual({...medidaActual, perforacion: value})}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccione" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {perforaciones.map(perf => (
+                        <SelectItem key={perf} value={perf}>{perf === 'ninguna' ? 'Ninguna' : perf.charAt(0).toUpperCase() + perf.slice(1)}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="md:col-span-2">
+                  <Label>Pegado de Bordo</Label>
+                  <BordoSelector value={medidaActual.tipoBordo} onChange={value => setMedidaActual({...medidaActual, tipoBordo: value})} />
+                </div>
+                <div>
+                  <Label htmlFor="cantoBordo">Tipo de Canto</Label>
+                  <Select value={medidaActual.cantoBordo} onValueChange={value => setMedidaActual({...medidaActual, cantoBordo: value})}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccione" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {cantos.map(canto => (
+                        <SelectItem key={canto} value={canto}>{canto === 'canto-suave' ? 'Canto Suave' : 'Canto Duro'}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="md:col-span-2">
+                  <Button type="button" onClick={agregarMedida} className="w-full bg-green-600 hover:bg-green-700">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Agregar Medida
+                  </Button>
+                </div>
+              </form>
             </div>
           </CardContent>
         </Card>
@@ -456,6 +556,20 @@ const CotizacionForm = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Modales para grabador de voz y cámara */}
+      {showVoiceRecorder && (
+        <VoiceRecorder
+          onTranscription={manejarTranscripcionVoz}
+          onClose={() => setShowVoiceRecorder(false)}
+        />
+      )}
+      {showCameraCapture && (
+        <CameraCapture
+          onImageAnalysis={manejarAnalisisImagen}
+          onClose={() => setShowCameraCapture(false)}
+        />
+      )}
     </div>
   )
 }
