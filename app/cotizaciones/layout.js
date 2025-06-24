@@ -1,10 +1,6 @@
 import { Toaster } from 'sonner'
 
-export default function CotizacionesLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function CotizacionesLayout({ children }) {
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm border-b">
