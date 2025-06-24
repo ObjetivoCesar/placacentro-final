@@ -10,6 +10,7 @@ import { Trash2, Upload, Plus } from 'lucide-react'
 import { toast } from 'sonner'
 import BordoSelector from './BordoSelector.jsx'
 import { processImageWithOpenAI, sendToWhatsApp } from '../lib/imageUtils.js'
+import { getOrCreateBrowserUserId } from '@/lib/utils'
 
 const CotizacionForm = () => {
   
@@ -155,30 +156,33 @@ const CotizacionForm = () => {
     setIsLoading(true)
 
     try {
+      const userId = getOrCreateBrowserUserId()
+      // Formatear mensaje para el chat
+      const cotizacionMensaje = `📝 Nueva cotización enviada:\n- Tipo de plancha: ${formData.tipoPlancha}\n- Color: ${formData.color}\n- Vendedora: ${formData.vendedora}\n- Medidas:\n${medidas.map(m => `  • ${m.descripcion} (${m.cantidad} piezas)`).join("\n")}\n- Comentarios: ${formData.comentarios || "Sin comentarios"}`
       const payload = {
-        tipoPlancha: formData.tipoPlancha,
-        color: formData.color,
-        vendedora: formData.vendedora,
-        medidasTexto: medidas.map(m => m.descripcion).join('\n'),
-        medidasArray: medidas.map(m => m.descripcion),
-        medidasEstructuradas: medidas,
-        totalMedidas: medidas.length,
-        totalPiezas: medidas.reduce((total, medida) => total + medida.cantidad, 0),
-        comentarios: formData.comentarios,
-        imagenes: imagenes
+        userId,
+        message: cotizacionMensaje,
+        timestamp: new Date().toISOString(),
+        source: "placacentro-cotizacion-form",
+        cotizacion: {
+          tipoPlancha: formData.tipoPlancha,
+          color: formData.color,
+          vendedora: formData.vendedora,
+          medidas: medidas,
+          imagenes: imagenes,
+          comentarios: formData.comentarios,
+        },
       }
 
-      // Enviar a Make.com webhook
-      const response = await fetch(import.meta.env.VITE_MAKE_WEBHOOK_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+      // Enviar al chat (NO al webhook de Make)
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       })
 
       if (response.ok) {
-        toast.success("Su cotización se ha enviado correctamente")
+        toast.success("Su cotización se ha enviado correctamente y aparecerá en el chat")
         
         // Reset del formulario
         setFormData({
@@ -190,10 +194,10 @@ const CotizacionForm = () => {
         setMedidas([])
         setImagenes([])
       } else {
-        throw new Error('Error en el envío')
+        toast.error("Error al enviar la cotización al chat")
       }
-    } catch (error) {
-      toast.error("Error al enviar la cotización. Intente nuevamente.")
+    } catch (err) {
+      toast.error("Error inesperado al enviar la cotización")
     } finally {
       setIsLoading(false)
     }
