@@ -9,6 +9,7 @@ import CartSection from "@/components/cart-section"
 import FloatingChat from "@/components/floating-chat"
 import FixedFooter from "@/components/fixed-footer"
 import ContactCards from "@/components/contact-cards"
+import CotizacionForm from "@/components/cotizaciones/CotizacionForm"
 
 /**
  * COMPONENTE PRINCIPAL: Aplicación después del landing
@@ -216,7 +217,21 @@ export default function MainApp() {
         )}
 
         {/* Renderizado condicional de secciones */}
-        {activeSection === "optimization" && <OptimizationSection />}
+        {activeSection === "optimization" && (
+          <div>
+            {/* Franja azul y encabezado */}
+            <div className="bg-gradient-to-r from-blue-500 to-blue-600 py-4">
+              <div className="container mx-auto px-6 text-center">
+                <p className="text-sm text-blue-100">Herramientas</p>
+                <h2 className="text-xl font-bold text-white">Optimización de Cortes</h2>
+              </div>
+            </div>
+            {/* Cotizador nativo debajo de la franja azul */}
+            <div className="container mx-auto px-6 py-8">
+              <CotizacionForm />
+            </div>
+          </div>
+        )}
         {activeSection === "ecommerce" && <EcommerceSection />}
         {activeSection === "cart" && <CartSection />}
       </main>

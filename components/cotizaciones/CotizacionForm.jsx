@@ -1,16 +1,19 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.jsx'
-import { Input } from '@/components/ui/input.jsx'
-import { Label } from '@/components/ui/label.jsx'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.jsx'
-import { Textarea } from '@/components/ui/textarea.jsx'
-import { Badge } from '@/components/ui/badge.jsx'
-import { Trash2, Upload, Plus } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
+import { Badge } from '@/components/ui/badge'
+import { Trash2, Upload, Plus, Mic, Camera } from 'lucide-react'
 import { toast } from 'sonner'
 import BordoSelector from './BordoSelector.jsx'
-import { processImageWithOpenAI, sendToWhatsApp } from '../lib/imageUtils.js'
+import { processImageWithOpenAI, sendToWhatsApp } from '@/lib/imageUtils.js'
 import { getOrCreateBrowserUserId } from '@/lib/utils'
+import VoiceRecorder from './VoiceRecorder.jsx'
+import CameraCapture from './CameraCapture.jsx'
+import FileUpload from './FileUpload.jsx'
 
 const CotizacionForm = () => {
   
@@ -19,7 +22,12 @@ const CotizacionForm = () => {
     tipoPlancha: '',
     color: '',
     vendedora: '',
-    comentarios: ''
+    comentarios: '',
+    nombreCliente: '',
+    telefono: '',
+    direccionTaller: '',
+    entrega: 'domicilio',
+    fecha: new Date().toISOString().slice(0, 10)
   })
 
   // Estados para medidas
@@ -49,7 +57,7 @@ const CotizacionForm = () => {
     '1-largo-1-corto': '1 Largo y 1 Corto',
     '1-largo-2-cortos': '1 Largo y 2 Cortos',
     '4-lados': '4 Lados'
-  }
+  };
 
   // Función para agregar medida
   const agregarMedida = () => {
@@ -189,7 +197,12 @@ const CotizacionForm = () => {
           tipoPlancha: '',
           color: '',
           vendedora: '',
-          comentarios: ''
+          comentarios: '',
+          nombreCliente: '',
+          telefono: '',
+          direccionTaller: '',
+          entrega: 'domicilio',
+          fecha: new Date().toISOString().slice(0, 10)
         })
         setMedidas([])
         setImagenes([])
@@ -202,6 +215,33 @@ const CotizacionForm = () => {
       setIsLoading(false)
     }
   }
+
+  // Panel visual de ingreso de medidas
+  const MedidasVisual = () => (
+    <div className="flex flex-col md:flex-row justify-center items-center gap-4 mb-6">
+      <div className="flex flex-col items-center flex-1">
+        <button type="button" className="rounded-full bg-blue-600 w-24 h-24 flex items-center justify-center mb-2 focus:outline-none">
+          <Mic className="w-10 h-10 text-white" />
+        </button>
+        <div className="font-bold text-center text-white">Dictar Medidas</div>
+        <div className="text-sm text-gray-300 text-center">Haz clic para grabar medidas</div>
+      </div>
+      <div className="flex flex-col items-center flex-1">
+        <button type="button" className="rounded-full bg-blue-600 w-24 h-24 flex items-center justify-center mb-2 focus:outline-none">
+          <Camera className="w-10 h-10 text-white" />
+        </button>
+        <div className="font-bold text-center text-white">Foto de Medidas</div>
+        <div className="text-sm text-gray-300 text-center">Tomar foto de medidas<br/>Requiere HTTPS y permisos</div>
+      </div>
+      <div className="flex flex-col items-center flex-1">
+        <button type="button" className="rounded-full bg-green-500 w-24 h-24 flex items-center justify-center mb-2 focus:outline-none">
+          <Upload className="w-10 h-10 text-white" />
+        </button>
+        <div className="font-bold text-center text-white">Subir Foto</div>
+        <div className="text-sm text-gray-300 text-center">Subir foto de medidas<br/>Formatos: JPG, PNG, WebP (máx. 10MB)</div>
+      </div>
+    </div>
+  )
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -254,6 +294,39 @@ const CotizacionForm = () => {
                 </SelectContent>
               </Select>
             </div>
+
+            <div>
+              <Label htmlFor="nombreCliente">Cliente</Label>
+              <Input value={formData.nombreCliente} onChange={e => setFormData({...formData, nombreCliente: e.target.value})} placeholder="Nombre del cliente" />
+            </div>
+
+            <div>
+              <Label htmlFor="telefono">Teléfono</Label>
+              <Input value={formData.telefono} onChange={e => setFormData({...formData, telefono: e.target.value})} placeholder="Teléfono" />
+            </div>
+
+            <div>
+              <Label htmlFor="direccionTaller">Dirección</Label>
+              <Input value={formData.direccionTaller} onChange={e => setFormData({...formData, direccionTaller: e.target.value})} placeholder="Dirección de entrega o taller" />
+            </div>
+
+            <div>
+              <Label htmlFor="entrega">Entrega</Label>
+              <Select value={formData.entrega} onValueChange={value => setFormData({...formData, entrega: value})}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Seleccione entrega" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="domicilio">A Domicilio</SelectItem>
+                  <SelectItem value="sucursal">En Sucursal</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="fecha">Fecha</Label>
+              <Input type="date" value={formData.fecha} onChange={e => setFormData({...formData, fecha: e.target.value})} />
+            </div>
           </CardContent>
         </Card>
 
@@ -262,80 +335,11 @@ const CotizacionForm = () => {
           <CardHeader>
             <CardTitle>Ingreso de Medidas</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="largo">Largo (cm)</Label>
-                <Input
-                  type="number"
-                  value={medidaActual.largo}
-                  onChange={(e) => setMedidaActual({...medidaActual, largo: e.target.value})}
-                  placeholder="Ej: 120"
-                />
-              </div>
-              <div>
-                <Label htmlFor="ancho">Ancho (cm)</Label>
-                <Input
-                  type="number"
-                  value={medidaActual.ancho}
-                  onChange={(e) => setMedidaActual({...medidaActual, ancho: e.target.value})}
-                  placeholder="Ej: 60"
-                />
-              </div>
+          <CardContent>
+            <div className="flex flex-col items-center justify-center">
+              <MedidasVisual />
+              {/* Fila de botones pequeños eliminada para dejar solo la fila superior de botones grandes */}
             </div>
-
-            <div>
-              <Label htmlFor="cantidad">Cantidad</Label>
-              <Input
-                type="number"
-                min="1"
-                value={medidaActual.cantidad}
-                onChange={(e) => setMedidaActual({...medidaActual, cantidad: e.target.value})}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="perforacion">Perforación</Label>
-              <Select value={medidaActual.perforacion} onValueChange={(value) => setMedidaActual({...medidaActual, perforacion: value})}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {perforaciones.map(perf => (
-                    <SelectItem key={perf} value={perf}>{perf === 'ninguna' ? 'Ninguna' : perf.charAt(0).toUpperCase() + perf.slice(1)}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label>Pegado de Bordo</Label>
-              <BordoSelector 
-                value={medidaActual.tipoBordo}
-                onChange={(value) => setMedidaActual({...medidaActual, tipoBordo: value})}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="cantoBordo">Tipo de Canto</Label>
-              <Select value={medidaActual.cantoBordo} onValueChange={(value) => setMedidaActual({...medidaActual, cantoBordo: value})}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {cantos.map(canto => (
-                    <SelectItem key={canto} value={canto}>
-                      {canto === 'canto-suave' ? 'Canto Suave' : 'Canto Duro'}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <Button onClick={agregarMedida} className="w-full bg-green-600 hover:bg-green-700">
-              <Plus className="w-4 h-4 mr-2" />
-              Agregar Medida
-            </Button>
           </CardContent>
         </Card>
 
@@ -384,7 +388,7 @@ const CotizacionForm = () => {
 
       {/* Panel de Resumen */}
       <div className="space-y-6">
-        <Card className="sticky top-24">
+        <Card className="sticky top-24 bg-[#23232a] text-white">
           <CardHeader>
             <CardTitle>Resumen de Cotización</CardTitle>
           </CardHeader>
@@ -393,33 +397,30 @@ const CotizacionForm = () => {
             <div>
               <h4 className="font-semibold mb-2">Información Básica</h4>
               <div className="space-y-1 text-sm">
-                <p><span className="font-medium">Tipo:</span> {formData.tipoPlancha || 'No seleccionado'}</p>
-                <p><span className="font-medium">Color:</span> {formData.color || 'No seleccionado'}</p>
-                <p><span className="font-medium">Vendedora:</span> {formData.vendedora || 'No seleccionada'}</p>
+                <p><span className="font-medium">Tipo:</span> {formData.tipoPlancha || <span className="text-gray-400">-</span>}</p>
+                <p><span className="font-medium">Color:</span> {formData.color || <span className="text-gray-400">-</span>}</p>
+                <p><span className="font-medium">Vendedora:</span> {formData.vendedora || <span className="text-gray-400">-</span>}</p>
+                <p><span className="font-medium">Cliente:</span> {formData.nombreCliente || <span className="text-gray-400">-</span>}</p>
+                <p><span className="font-medium">Teléfono:</span> {formData.telefono || <span className="text-gray-400">-</span>}</p>
+                <p><span className="font-medium">Dirección:</span> {formData.direccionTaller || <span className="text-gray-400">-</span>}</p>
+                <p><span className="font-medium">Entrega:</span> {formData.entrega === 'domicilio' ? <b>A Domicilio</b> : <b>En Sucursal</b>}</p>
+                <p><span className="font-medium">Fecha:</span> <b>{formData.fecha ? new Date(formData.fecha).toLocaleDateString('es-ES') : <span className="text-gray-400">-</span>}</b></p>
               </div>
             </div>
 
             {/* Lista de Medidas */}
-            {medidas.length > 0 && (
-              <div>
-                <h4 className="font-semibold mb-2">Medidas ({medidas.length} líneas, {medidas.reduce((total, medida) => total + medida.cantidad, 0)} piezas)</h4>
-                <div className="space-y-2 max-h-60 overflow-y-auto">
-                  {medidas.map((medida, index) => (
-                    <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded text-sm">
-                      <span>{medida.descripcion}</span>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => eliminarMedida(index)}
-                        className="text-red-600 hover:text-red-700"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
+            <div>
+              <h4 className="font-semibold mb-2">Medidas</h4>
+              {medidas.length === 0 ? (
+                <div className="text-gray-300 text-sm">No hay medidas agregadas.</div>
+              ) : (
+                <ul className="text-sm list-disc pl-5 space-y-1">
+                  {medidas.map((medida, idx) => (
+                    <li key={idx}>{medida.descripcion}</li>
                   ))}
-                </div>
-              </div>
-            )}
+                </ul>
+              )}
+            </div>
 
             {/* Imágenes */}
             {imagenes.length > 0 && (
