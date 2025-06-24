@@ -43,6 +43,7 @@ const CotizacionForm = () => {
   const [medidas, setMedidas] = useState([])
   const [imagenes, setImagenes] = useState([])
   const [isLoading, setIsLoading] = useState(false)
+  const [transcripcionVoz, setTranscripcionVoz] = useState("")
 
   // Opciones para los selectores
   const tiposPlanchas = ['MDF', 'Melamina', 'Terciado', 'Aglomerado']
@@ -168,46 +169,26 @@ const CotizacionForm = () => {
       const fechaActual = new Date().toISOString()
       // Formatear mensaje para el chat
       const cotizacionMensaje = `📝 Nueva cotización enviada:\n- Tipo de plancha: ${formData.tipoPlancha}\n- Color: ${formData.color}\n- Vendedora: ${formData.vendedora}\n- Entrega: ${formData.entrega === 'sucursal' ? `En Sucursal (${formData.sucursal === 'valle' ? 'Valle' : 'Centro'})` : 'A Domicilio'}\n- Medidas:\n${medidas.map(m => `  • ${m.descripcion} (${m.cantidad} piezas)`).join("\n")}\n- Comentarios: ${formData.comentarios || "Sin comentarios"}`
-      const payload = {
-        userId,
-        message: cotizacionMensaje,
-        timestamp: fechaActual,
-        source: "placacentro-cotizacion-form",
-        cotizacion: {
-          ...formData,
-          fecha: fechaActual,
-          medidas,
-          imagenes
-        }
-      }
-
-      // Enviar al chat (NO al webhook de Make)
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+      
+      // Enviar resumen de cotización al chat flotante en vez de hacer fetch
+      window.dispatchEvent(new CustomEvent("setChatInput", { detail: cotizacionMensaje }))
+      window.dispatchEvent(new Event("openFloatingChat"))
+      toast.success("El resumen de tu cotización ha sido copiado al chat. Revísalo y envíalo para continuar.")
+      
+      // Reset del formulario
+      setFormData({
+        tipoPlancha: '',
+        color: '',
+        vendedora: '',
+        comentarios: '',
+        nombreCliente: '',
+        telefono: '',
+        direccionTaller: '',
+        entrega: 'domicilio',
+        sucursal: ''
       })
-
-      if (response.ok) {
-        toast.success("Su cotización se ha enviado correctamente y aparecerá en el chat")
-        
-        // Reset del formulario
-        setFormData({
-          tipoPlancha: '',
-          color: '',
-          vendedora: '',
-          comentarios: '',
-          nombreCliente: '',
-          telefono: '',
-          direccionTaller: '',
-          entrega: 'domicilio',
-          sucursal: ''
-        })
-        setMedidas([])
-        setImagenes([])
-      } else {
-        toast.error("Error al enviar la cotización al chat")
-      }
+      setMedidas([])
+      setImagenes([])
     } catch (err) {
       toast.error("Error inesperado al enviar la cotización")
     } finally {
@@ -217,6 +198,7 @@ const CotizacionForm = () => {
 
   // Función para agregar medidas desde transcripción de voz
   const manejarTranscripcionVoz = (medidasVoz, texto) => {
+    setTranscripcionVoz(texto)
     setMedidas(prevMedidas => {
       const nuevas = medidasVoz.map(medida => ({
         linea: prevMedidas.length + 1,
@@ -509,7 +491,15 @@ const CotizacionForm = () => {
             <div>
               <h4 className="font-semibold mb-2">Medidas</h4>
               {medidas.length === 0 ? (
-                <div className="text-gray-300 text-sm">No hay medidas agregadas.</div>
+                <div className="text-gray-300 text-sm">
+                  No hay medidas agregadas.
+                  {transcripcionVoz && (
+                    <div className="mt-2 text-gray-400">
+                      <span className="font-medium">Transcripción de audio:</span>
+                      <div className="italic">{transcripcionVoz}</div>
+                    </div>
+                  )}
+                </div>
               ) : (
                 <ul className="text-sm list-disc pl-5 space-y-1">
                   {medidas.map((medida, idx) => (
