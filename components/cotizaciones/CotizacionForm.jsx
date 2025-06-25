@@ -15,6 +15,7 @@ import VoiceRecorder from './VoiceRecorder.jsx'
 import CameraCapture from './CameraCapture.jsx'
 import FileUpload from './FileUpload.jsx'
 import { formatCotizacionMensaje } from '@/lib/messageFormatter'
+import { parseMedidasFromText } from '@/lib/parseMedidas'
 
 const CotizacionForm = () => {
   
@@ -207,8 +208,10 @@ const CotizacionForm = () => {
   // Función para agregar medidas desde transcripción de voz
   const manejarTranscripcionVoz = (medidasVoz, texto) => {
     setTranscripcionVoz(prev => [...prev, texto])
+    // Si el array de medidasVoz está vacío, intentar parsear desde el texto
+    const medidasParseadas = (medidasVoz && medidasVoz.length > 0) ? medidasVoz : parseMedidasFromText(texto)
     setMedidas(prevMedidas => {
-      const nuevas = medidasVoz.map(medida => ({
+      const nuevas = medidasParseadas.map(medida => ({
         linea: prevMedidas.length + 1,
         cantidad: medida.cantidad,
         largo: medida.largo.toString(),
@@ -216,17 +219,20 @@ const CotizacionForm = () => {
         perforacion: medida.perforacion,
         tipoBordo: medida.tipoBordo,
         cantoBordo: medida.cantoBordo,
-        descripcion: `Cant: ${medida.cantidad}, L${medida.largo}, A${medida.ancho}, P-${medida.perforacion}, Bordo-${bordoTexto[medida.tipoBordo]}, B-${medida.cantoBordo === 'canto-suave' ? 'Suave' : 'Duro'}`
+        descripcion: medida.descripcion
       }))
       const combinadas = [...prevMedidas, ...nuevas]
       return combinadas.map((m, i) => ({ ...m, linea: i + 1 }))
     })
-    toast.success(`Se agregaron ${medidasVoz.length} medidas desde el audio.`)
+    toast.success(`Se agregaron ${medidasParseadas.length} medidas desde el audio.`)
   }
   // Función para agregar medidas desde análisis de imagen
   const manejarAnalisisImagen = (medidasImg, texto) => {
+    setTranscripcionImagen(prev => [...prev, texto])
+    // Si el array de medidasImg está vacío, intentar parsear desde el texto
+    const medidasParseadas = (medidasImg && medidasImg.length > 0) ? medidasImg : parseMedidasFromText(texto)
     setMedidas(prevMedidas => {
-      const nuevas = medidasImg.map(medida => ({
+      const nuevas = medidasParseadas.map(medida => ({
         linea: prevMedidas.length + 1,
         cantidad: medida.cantidad,
         largo: medida.largo.toString(),
@@ -234,13 +240,12 @@ const CotizacionForm = () => {
         perforacion: medida.perforacion,
         tipoBordo: medida.tipoBordo,
         cantoBordo: medida.cantoBordo,
-        descripcion: `Cant: ${medida.cantidad}, L${medida.largo}, A${medida.ancho}, P-${medida.perforacion}, Bordo-${bordoTexto[medida.tipoBordo]}, B-${medida.cantoBordo === 'canto-suave' ? 'Suave' : 'Duro'}`
+        descripcion: medida.descripcion
       }))
       const combinadas = [...prevMedidas, ...nuevas]
       return combinadas.map((m, i) => ({ ...m, linea: i + 1 }))
     })
-    setTranscripcionImagen(prev => [...prev, texto])
-    toast.success(`Se agregaron ${medidasImg.length} medidas desde la imagen.`)
+    toast.success(`Se agregaron ${medidasParseadas.length} medidas desde la imagen.`)
   }
 
   // Panel visual de ingreso de medidas
