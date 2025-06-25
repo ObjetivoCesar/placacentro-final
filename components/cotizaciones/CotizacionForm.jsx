@@ -14,6 +14,7 @@ import { getOrCreateBrowserUserId } from '@/lib/utils'
 import VoiceRecorder from './VoiceRecorder.jsx'
 import CameraCapture from './CameraCapture.jsx'
 import FileUpload from './FileUpload.jsx'
+import { formatCotizacionMensaje } from '@/lib/messageFormatter'
 
 const CotizacionForm = () => {
   
@@ -43,7 +44,8 @@ const CotizacionForm = () => {
   const [medidas, setMedidas] = useState([])
   const [imagenes, setImagenes] = useState([])
   const [isLoading, setIsLoading] = useState(false)
-  const [transcripcionVoz, setTranscripcionVoz] = useState("")
+  const [transcripcionVoz, setTranscripcionVoz] = useState([])
+  const [transcripcionImagen, setTranscripcionImagen] = useState([])
 
   // Opciones para los selectores
   const tiposPlanchas = ['MDF', 'Melamina', 'Terciado', 'Aglomerado']
@@ -168,7 +170,13 @@ const CotizacionForm = () => {
       const userId = getOrCreateBrowserUserId()
       const fechaActual = new Date().toISOString()
       // Formatear mensaje para el chat
-      const cotizacionMensaje = `📝 Nueva cotización enviada:\n- Tipo de plancha: ${formData.tipoPlancha}\n- Color: ${formData.color}\n- Vendedora: ${formData.vendedora}\n- Entrega: ${formData.entrega === 'sucursal' ? `En Sucursal (${formData.sucursal === 'valle' ? 'Valle' : 'Centro'})` : 'A Domicilio'}\n- Medidas:\n${medidas.map(m => `  • ${m.descripcion} (${m.cantidad} piezas)`).join("\n")}\n- Comentarios: ${formData.comentarios || "Sin comentarios"}`
+      const cotizacionMensaje = formatCotizacionMensaje({
+        formData,
+        medidas,
+        transcripcionVoz,
+        transcripcionImagen,
+        imagenes
+      })
       
       // Enviar resumen de cotización al chat flotante en vez de hacer fetch
       window.dispatchEvent(new CustomEvent("setChatInput", { detail: cotizacionMensaje }))
@@ -198,7 +206,7 @@ const CotizacionForm = () => {
 
   // Función para agregar medidas desde transcripción de voz
   const manejarTranscripcionVoz = (medidasVoz, texto) => {
-    setTranscripcionVoz(texto)
+    setTranscripcionVoz(prev => [...prev, texto])
     setMedidas(prevMedidas => {
       const nuevas = medidasVoz.map(medida => ({
         linea: prevMedidas.length + 1,
@@ -231,6 +239,7 @@ const CotizacionForm = () => {
       const combinadas = [...prevMedidas, ...nuevas]
       return combinadas.map((m, i) => ({ ...m, linea: i + 1 }))
     })
+    setTranscripcionImagen(prev => [...prev, texto])
     toast.success(`Se agregaron ${medidasImg.length} medidas desde la imagen.`)
   }
 
@@ -493,10 +502,12 @@ const CotizacionForm = () => {
               {medidas.length === 0 ? (
                 <div className="text-gray-300 text-sm">
                   No hay medidas agregadas.
-                  {transcripcionVoz && (
+                  {transcripcionVoz.length > 0 && (
                     <div className="mt-2 text-gray-400">
-                      <span className="font-medium">Transcripción de audio:</span>
-                      <div className="italic">{transcripcionVoz}</div>
+                      <span className="font-medium">Transcripción de Voz:</span>
+                      {transcripcionVoz.map((t, i) => (
+                        <div key={i} className="italic bg-slate-800 text-white rounded px-2 py-1 my-1">{t}</div>
+                      ))}
                     </div>
                   )}
                 </div>
@@ -506,6 +517,24 @@ const CotizacionForm = () => {
                     <li key={idx}>{medida.descripcion}</li>
                   ))}
                 </ul>
+              )}
+              {/* Mostrar todas las transcripciones de voz debajo de las medidas */}
+              {transcripcionVoz.length > 0 && medidas.length > 0 && (
+                <div className="mt-4">
+                  <span className="font-semibold">Transcripción de Voz</span>:
+                  {transcripcionVoz.map((t, i) => (
+                    <div key={i} className="italic bg-slate-800 text-white rounded px-2 py-1 my-1">{t}</div>
+                  ))}
+                </div>
+              )}
+              {/* Mostrar todas las transcripciones de imagen debajo de las medidas */}
+              {transcripcionImagen.length > 0 && medidas.length > 0 && (
+                <div className="mt-4">
+                  <span className="font-semibold">Transcripción de Imagen</span>:
+                  {transcripcionImagen.map((t, i) => (
+                    <div key={i} className="italic bg-slate-800 text-white rounded px-2 py-1 my-1">{t}</div>
+                  ))}
+                </div>
               )}
             </div>
 

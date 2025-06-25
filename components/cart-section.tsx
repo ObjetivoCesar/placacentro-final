@@ -10,6 +10,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import Image from "next/image"
 import type { CartItem } from "@/types"
 import { getOrCreateBrowserUserId } from "@/lib/utils"
+import { formatResumenPedido } from '@/lib/messageFormatter'
 
 /**
  * COMPONENTE: Sección dedicada del carrito
@@ -88,10 +89,11 @@ export default function CartSection() {
     }
 
     // Generar resumen y pasarlo al chat flotante
-    const resumen = generarResumenPedido(cart)
+    const resumen = formatResumenPedido(cart)
     window.dispatchEvent(new CustomEvent("setChatInput", { detail: resumen }))
     window.dispatchEvent(new Event("openFloatingChat"))
     setSubmitMessage("El resumen de tu pedido ha sido copiado al chat. Revísalo y envíalo para continuar.")
+    setCart([])
   }
 
   return (
