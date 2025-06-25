@@ -258,7 +258,7 @@ export default function FloatingChat() {
 
   return (
     <div className="fixed bottom-32 right-6 z-[120]">
-      <Card className={`w-80 shadow-2xl transition-all duration-300 ${isMinimized ? "h-14" : "h-[460px]"}`}>
+      <Card className={`w-[368px] shadow-2xl transition-all duration-300 ${isMinimized ? "h-14" : "h-[529px]"}`}>
         <CardHeader className="p-4 bg-green-600 text-white rounded-t-lg">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
@@ -292,12 +292,12 @@ export default function FloatingChat() {
         </CardHeader>
 
         {!isMinimized && (
-          <CardContent className="p-0 flex flex-col h-[400px]">
+          <CardContent className="p-0 flex flex-col h-[460px]">
             {/* Messages Area */}
             <div className="flex-1 overflow-y-auto p-4 space-y-3">
               {messages.map((message) => (
                 <div key={message.id} className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}>
-                  <div className={`flex items-start space-x-2 max-w-xs`}>
+                  <div className={`flex items-start space-x-2 max-w-sm`}>
                     {message.type === "bot" && (
                       <div className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center flex-shrink-0">
                         <Bot className="h-3 w-3 text-white" />
