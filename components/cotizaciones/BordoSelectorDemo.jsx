@@ -1,3 +1,4 @@
+"use client"
 import { useState } from 'react'
 import BordoSelector from './BordoSelector'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
