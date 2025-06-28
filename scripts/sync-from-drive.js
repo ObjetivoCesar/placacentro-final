@@ -9,7 +9,7 @@
  */
 
 // URL del Google Drive proporcionada por el cliente
-const driveUrl = "https://drive.google.com/file/d/1gdCOFgGFyBDKAycLBpCla3fislRLIFpR/view?usp=sharing"
+const driveUrl = "https://drive.google.com/file/d/10vk4iMAgM2Kn9TH-WkpmOzKZ0IRxRNTF/view?usp=sharing"
 
 // Convertir URL de Google Drive a URL de descarga directa
 function convertGoogleDriveUrl(url) {

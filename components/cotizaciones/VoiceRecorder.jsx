@@ -102,7 +102,25 @@ const VoiceRecorder = ({ onTranscription, isDisabled = false }) => {
     formData.append('file', audioFile)
     formData.append('model', 'whisper-1')
     formData.append('language', 'es')
-    formData.append('prompt', `Eres el asistente de César especializado en extraer cantidades y medidas dictadas por voz.\n\n1. PRE-PROCESO:\n   • Elimina ruidos y repeticiones.\n   • Asegúrate de que sólo queden números y palabras clave.\n\n2. POR CADA FILA O FRASE:\n   a) Extrae “cantidad” como un entero (1–10).\n      - Si no coincide con 1–10, añade “?” tras el número.\n   b) Extrae “largo” y “ancho” siguiendo el patrón \\d+(?:\\.\\d+)?[x×por ]+\\d+(?:\\.\\d+)?\n      - Si algún caracter no se ajusta, reemplázalo por “?” en esa posición.\n   c) Detecta bordos según reglas:\n      - Si se menciona un lado largo = "un lado largo"\n      - Si se menciona un lado corto = "un lado corto"\n      - Si se mencionan dos lados largos = "dos largos"\n      - Si se mencionan dos lados cortos = "dos cortos"\n      - Si se menciona un lado largo y un lado corto = "un largo un corto"\n      - Si se mencionan dos lados largos y un lado corto = "dos largos un corto"\n      - Si se menciona un lado largo y dos lados cortos = "un largo dos cortos"\n      - Si se mencionan cuatro lados = "4 lados"\n\n   La respuesta esperada va a ser:\n   Cant (número) L()XA() Bordo (descripción)\n   Ejemplo de respuesta:\n   1 / 23.5X43.7 / 1 largo\n   12 / 32.7x98 / 2 largos un corto\n\n3. FORMATO DE SALIDA PARA USUARIO:\n   Cant / Largo×Ancho / descripción bordos\n   (p. ej. 2 / 35.6×29 / dos largos un corto)\n\n4. DETECCIÓN DE TEXTOS ADICIONALES:\n   • Si el audio contiene otros fragmentos de texto (títulos, nombres de planchas, lista de materiales, anotaciones, etc.), extrae esos textos completos.\n   • Consolida todos esos fragmentos bajo el encabezado Texto del audio:.\n   • Después, lista las medidas extraídas (según puntos 2–3) bajo el encabezado Medidas del audio:.\n\nEjemplo de salida final (siguiendo al pie de la letra el formato solicitado):\n\nTexto del audio:\nMELAMINA BLANCA HR\n15 mm BORDO BLANCO\n\nMedidas del audio:\n1 / 89.5×30 / un lado largo\n12? / 61.7×30 / dos largos\n12 / 58.7×30 / dos largos un corto\n12 / 58.7×10 / un largo un corto\n12 / 92.5×30? / ?\n(par) 12 / – / –\n12 / – / –\n200 / – / –\n\nEl formato de salida debe ser Cant: 1, L12, A23, P-ninguna, Bordo-1 Largo, B-Suave donde cant es cantidad, L es el largo, A es el ancho, P es perforación y si no se menciona no pasa nada seria 0, Bordo depende del dictado y representa 1 rectángulo y generalmente puede ser algunas combinaciones.`)
+    formData.append('prompt', `Eres un asistente experto en fabricación de ventanas y vidrios. Recibirás una transcripción de audio donde un usuario describe las medidas de una ventana o vidrio, a veces de forma desordenada o con unidades variadas (milímetros, centímetros, metros). Tu tarea es:
+
+1. Analiza cuidadosamente la descripción y extrae las medidas de los 4 lados: superior, inferior, izquierdo y derecho.
+2. Si el usuario menciona solo dos medidas (ancho y alto), asígnalas a los lados correspondientes (superior/inferior = ancho, izquierdo/derecho = alto).
+3. Si el usuario da 4 medidas distintas, asígnalas según la descripción (por ejemplo: "el lado izquierdo mide 1200, el derecho 1210...").
+4. Convierte todas las medidas a milímetros, aunque el usuario hable en centímetros o metros.
+5. Si la ventana está descuadrada (los lados opuestos no miden igual), respeta las medidas dadas.
+6. Si hay dudas, explica brevemente tu razonamiento.
+7. Devuelve la respuesta en formato JSON, por ejemplo:
+
+{
+  "superior": 1200,
+  "inferior": 1200,
+  "izquierdo": 1500,
+  "derecho": 1505,
+  "notas": "El lado derecho es 5mm más largo según la descripción."
+}
+
+Transcripción de audio: {AQUÍ VA LA TRANSCRIPCIÓN}`)
 
     const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
       method: 'POST',

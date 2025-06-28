@@ -1,4 +1,4 @@
-# 📚 DOCUMENTACIÓN COMPLETA - PLACACENTRO E-COMMERCE
+# 📚 DOCUMENTACIÓN COMPLETA - ALUVRIL E-COMMERCE
 
 > Esta documentación general resume la arquitectura y enlaza a la documentación específica de cada módulo clave.
 

@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     console.log("   - UserId recibido:", userId)
 
     // URL del webhook de Make.com (mismo que el chat)
-    const webhookUrl = process.env.CHAT_WEBHOOK_URL || "https://hook.us2.make.com/ql05r0bkj8p9f5ddtyv0m3sq8muz487p"
+    const webhookUrl = process.env.CHAT_WEBHOOK_URL || "https://hook.us2.make.com/reeof7c6njw467pr0vf9wmavk29baftp"
 
     // ESTRUCTURA CORREGIDA - INCLUIR USERID COMO EN EL CHAT
     const webhookData = {
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
 
         // METADATOS ADICIONALES
         type: "ecommerce-order",
-        source: "placacentro-ecommerce",
+        source: "aluvril-ecommerce",
 
         // INFORMACIÓN DEL USUARIO
         userId: userId,

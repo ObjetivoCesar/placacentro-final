@@ -14,14 +14,14 @@ function App() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
               <img 
-                src="/placacentro-logo.png" 
-                alt="Placacentro" 
+                src="/images/logo.webp" 
+                alt="DISTRIBUIDORA DE ALUMINIO Y VIDRIO" 
                 className="h-10 w-auto"
                 onError={(e) => {
                   e.target.style.display = 'none'
                 }}
               />
-              <h1 className="text-xl font-bold text-gray-900">Placacentro</h1>
+              <h1 className="text-xl font-bold text-gray-900">DISTRIBUIDORA DE ALUMINIO Y VIDRIO</h1>
             </div>
             <Button 
               className="bg-green-600 hover:bg-green-700 text-white"
@@ -47,7 +47,7 @@ function App() {
       <footer className="bg-white border-t mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="text-center text-gray-600">
-            <p>&copy; 2024 Placacentro. Todos los derechos reservados.</p>
+            <p>&copy; 2024 DISTRIBUIDORA DE ALUMINIO Y VIDRIO. Todos los derechos reservados.</p>
           </div>
         </div>
       </footer>

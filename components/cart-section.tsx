@@ -36,7 +36,7 @@ export default function CartSection() {
   }, [])
 
   const loadCart = () => {
-    const savedCart = localStorage.getItem("placacentro-cart")
+    const savedCart = localStorage.getItem("aluvril-cart")
     if (savedCart) {
       setCart(JSON.parse(savedCart))
     }

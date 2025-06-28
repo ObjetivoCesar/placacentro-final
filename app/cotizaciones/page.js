@@ -35,12 +35,11 @@ const CotizacionForm = () => {
   // Estados para medidas
   const [medidas, setMedidas] = useState([])
   const [medidaActual, setMedidaActual] = useState({
-    cantidad: '',
-    largo: '',
-    ancho: '',
-    tipoBordo: '1-largo',
-    perforacion: 'ninguna',
-    cantoBordo: 'canto-suave'
+    superior: '',
+    derecha: '',
+    inferior: '',
+    izquierda: '',
+    cantidad: ''
   })
 
   // Estados de UI
@@ -88,31 +87,25 @@ const CotizacionForm = () => {
     setUserId(id)
   }, [])
 
-  // Función para agregar medida
+  // Nueva función para agregar medida con 4 lados
   const agregarMedida = () => {
-    if (!medidaActual.cantidad || !medidaActual.largo || !medidaActual.ancho) {
+    if (!medidaActual.cantidad || !medidaActual.superior || !medidaActual.derecha || !medidaActual.inferior || !medidaActual.izquierda) {
       toast.error("Por favor completa todos los campos de la medida")
       return
     }
-
     const nuevaMedida = {
       id: uuidv4(),
-      ...medidaActual,
       cantidad: parseInt(medidaActual.cantidad),
-      largo: parseFloat(medidaActual.largo),
-      ancho: parseFloat(medidaActual.ancho),
-      descripcion: `${medidaActual.cantidad} unidades de ${medidaActual.largo} x ${medidaActual.ancho} cm`
+      lados: [
+        Number(medidaActual.superior),
+        Number(medidaActual.derecha),
+        Number(medidaActual.inferior),
+        Number(medidaActual.izquierda)
+      ],
+      descripcion: `${medidaActual.cantidad} piezas: Sup:${medidaActual.superior}cm, Der:${medidaActual.derecha}cm, Inf:${medidaActual.inferior}cm, Izq:${medidaActual.izquierda}cm`
     }
-
     setMedidas([...medidas, nuevaMedida])
-    setMedidaActual({
-      cantidad: '',
-      largo: '',
-      ancho: '',
-      tipoBordo: '1-largo',
-      perforacion: 'ninguna',
-      cantoBordo: 'canto-suave'
-    })
+    setMedidaActual({ superior: '', derecha: '', inferior: '', izquierda: '', cantidad: '' })
     toast.success("Medida agregada correctamente")
   }
 
@@ -191,7 +184,7 @@ const CotizacionForm = () => {
         userId: userId
       }
 
-      const response = await fetch(process.env.NEXT_PUBLIC_MAKE_WEBHOOK_URL || 'https://hook.us2.make.com/ql05r0bkj8p9f5ddtyv0m3sq8muz487p', {
+      const response = await fetch(process.env.NEXT_PUBLIC_MAKE_WEBHOOK_URL || 'https://hook.us2.make.com/reeof7c6njw467pr0vf9wmavk29baftp', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

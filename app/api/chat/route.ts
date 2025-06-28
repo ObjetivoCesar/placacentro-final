@@ -1,18 +1,18 @@
 import { type NextRequest, NextResponse } from "next/server"
 
 /**
- * API ROUTE: Chat Handler
- * CORREGIDO: Asegurar que userId siempre se envíe a Make.com
+ * API ROUTE: Chat Handler - DISTRIBUIDORA DE ALUMINIO Y VIDRIO (ALUVRIL)
+ * Siempre asegura que userId se envíe a Make.com
  */
 export async function POST(request: NextRequest) {
   try {
-    console.log("=== CHAT API: Procesando mensaje ===")
+    console.log("=== CHAT API ALUVRIL: Procesando mensaje ===")
 
     const chatData = await request.json()
 
     // VALIDACIÓN CRÍTICA: userId es obligatorio
     if (!chatData.userId) {
-      console.error("❌ CRÍTICO: userId faltante en request")
+      console.error("❌ CRÍTICO: userId faltante en request (ALUVRIL)")
       console.log("Datos recibidos:", Object.keys(chatData))
       return NextResponse.json(
         {
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (!chatData.message) {
-      console.error("❌ Mensaje vacío")
+      console.error("❌ Mensaje vacío (ALUVRIL)")
       return NextResponse.json(
         {
           error: "Mensaje requerido",
@@ -34,22 +34,22 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log("✅ Datos recibidos:")
+    console.log("✅ Datos recibidos (ALUVRIL):")
     console.log("   - UserId:", chatData.userId)
     console.log("   - Mensaje:", chatData.message.substring(0, 50) + "...")
     console.log("   - Items en carrito:", chatData.cartData?.length || 0)
 
     // URL del webhook de Make.com
-    const webhookUrl = process.env.CHAT_WEBHOOK_URL || "https://hook.us2.make.com/ql05r0bkj8p9f5ddtyv0m3sq8muz487p"
+    const webhookUrl = process.env.CHAT_WEBHOOK_URL || "https://hook.us2.make.com/reeof7c6njw467pr0vf9wmavk29baftp"
 
     // ESTRUCTURA CORREGIDA - USERID EN NIVEL SUPERIOR
     const webhookData = {
-      // IDENTIFICACIÓN EN PRIMER NIVEL (CRÍTICO PARA MAKE.COM)
+      // IDENTIFICACIÓN EN PRIMER NIVEL (CRÍTICO PARA MAKE.COM - ALUVRIL)
       userId: chatData.userId,
       userIdentifier: chatData.userId, // Duplicado para asegurar recepción
 
       // METADATOS DEL MENSAJE
-      source: "placacentro-floating-chat",
+      source: "aluvril-floating-chat",
       type: "chat-with-cart",
       message: chatData.message,
       timestamp: chatData.timestamp || new Date().toISOString(),
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
         sessionInfo: chatData.sessionInfo || {},
       },
 
-      // ORGANIZACIÓN PARA MAKE.COM
+      // ORGANIZACIÓN PARA MAKE.COM (ALUVRIL)
       folderName: `user_${chatData.userId}`,
       chatSession: {
         sessionId: `${chatData.userId}_${new Date().toISOString().split("T")[0]}`,
@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
         userId: chatData.userId,
         userIdentifier: chatData.userId,
         user_id: chatData.userId,
-        source: "placacentro-ecommerce",
+        source: "aluvril-ecommerce",
         type: "new-order",
         // @ts-expect-error: 'data' es requerido por Make.com aunque no esté en el tipo base
         data: {
@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
           subtotal: chatData.cartSummary?.totalValue || 0,
           timestamp: chatData.timestamp || new Date().toISOString(),
           type: "ecommerce-order",
-          source: "placacentro-ecommerce",
+          source: "aluvril-ecommerce",
           userId: chatData.userId,
           userIdentifier: chatData.userId,
         },
@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    console.log("📤 ENVIANDO A MAKE.COM:")
+    console.log("📤 ENVIANDO A MAKE.COM (ALUVRIL):")
     console.log("   - Webhook URL:", webhookUrl.substring(0, 50) + "...")
     console.log("   - UserId confirmado:", webhookData.userId)
     console.log("   - UserIdentifier:", webhookData.userIdentifier)
@@ -168,13 +168,13 @@ export async function POST(request: NextRequest) {
       console.log("Error details:", errorText)
     }
 
-    console.log("✅ PROCESAMIENTO COMPLETADO")
+    console.log("✅ PROCESAMIENTO COMPLETADO (ALUVRIL)")
     console.log("   - UserId enviado:", chatData.userId)
     console.log("   - Bot response disponible:", !!botResponse)
 
     return NextResponse.json({
       success: true,
-      message: "Mensaje procesado exitosamente",
+      message: "Mensaje procesado exitosamente (ALUVRIL)",
       timestamp: new Date().toISOString(),
       cartIncluded: (chatData.cartData?.length || 0) > 0,
       userId: chatData.userId,
@@ -185,9 +185,9 @@ export async function POST(request: NextRequest) {
     console.error("❌ Error procesando mensaje de chat:", err)
     return NextResponse.json({
       success: true,
-      message: "Mensaje recibido con problemas técnicos",
+      message: "Mensaje recibido con problemas técnicos (ALUVRIL)",
       timestamp: new Date().toISOString(),
-      botResponse: "Tu mensaje ha sido recibido. Un asesor se pondrá en contacto contigo pronto.",
+      botResponse: "Tu mensaje ha sido recibido. Un asesor de Aluvril se pondrá en contacto contigo pronto.",
       error: err.message,
     })
   }

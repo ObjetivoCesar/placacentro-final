@@ -1,7 +1,7 @@
 # 📦 GUÍA COMPLETA DE GESTIÓN DE INVENTARIOS
 
 ## 🎯 OBJETIVO
-Esta guía explica **paso a paso** cómo actualizar productos en la aplicación Placacentro, desde la preparación del archivo JSON hasta la verificación de cambios en la aplicación.
+Esta guía explica **paso a paso** cómo actualizar productos en la aplicación Aluvril, desde la preparación del archivo JSON hasta la verificación de cambios en la aplicación.
 
 ---
 
@@ -72,7 +72,7 @@ Esta guía explica **paso a paso** cómo actualizar productos en la aplicación 
    \`\`\`
    - Abre Google Drive
    - Nuevo → Archivo de texto
-   - Nombra: "inventario_placacentro.json"
+   - Nombra: "inventario_aluvril.json"
    - Pega el contenido JSON
    - Guarda el archivo
    \`\`\`

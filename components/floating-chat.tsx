@@ -28,7 +28,7 @@ export default function FloatingChat() {
   const [messages, setMessages] = useState<Message[]>(() => {
     // Recuperar historial del localStorage
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('placacentro-chat-history')
+      const saved = localStorage.getItem('aluvril-chat-history')
       if (saved) {
         try {
           const parsed = JSON.parse(saved)
@@ -43,7 +43,7 @@ export default function FloatingChat() {
       {
         id: "1",
         type: "bot",
-        content: "¡Hola! Soy Viviana de Placacentro. ¿En qué puedo ayudarte?",
+        content: "¡Hola! Soy Viviana de Aluvril. ¿En qué puedo ayudarte?",
         timestamp: new Date(),
       },
     ]
@@ -123,7 +123,7 @@ export default function FloatingChat() {
 
     try {
       // Obtener información del carrito
-      const cartData = localStorage.getItem("placacentro-cart")
+      const cartData = localStorage.getItem("aluvril-cart")
       let parsedCartData = []
 
       if (cartData) {
@@ -162,7 +162,7 @@ export default function FloatingChat() {
         // MENSAJE
         message: currentMessage,
         timestamp: new Date().toISOString(),
-        source: "placacentro-floating-chat",
+        source: "aluvril-floating-chat",
 
         // CARRITO
         cartData: parsedCartData,
@@ -248,7 +248,7 @@ export default function FloatingChat() {
   useEffect(() => {
     // Guardar historial en localStorage cada vez que cambian los mensajes
     if (typeof window !== 'undefined') {
-      localStorage.setItem('placacentro-chat-history', JSON.stringify(messages))
+      localStorage.setItem('aluvril-chat-history', JSON.stringify(messages))
     }
   }, [messages])
 

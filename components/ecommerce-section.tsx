@@ -34,7 +34,7 @@ export default function EcommerceSection() {
 
   useEffect(() => {
     // Guardar carrito en localStorage
-    localStorage.setItem("placacentro-cart", JSON.stringify(cart))
+    localStorage.setItem("aluvril-cart", JSON.stringify(cart))
     // Disparar evento para actualizar el contador del footer
     window.dispatchEvent(new Event("storage"))
   }, [cart])
@@ -58,7 +58,7 @@ export default function EcommerceSection() {
   }
 
   const loadCart = () => {
-    const savedCart = localStorage.getItem("placacentro-cart")
+    const savedCart = localStorage.getItem("aluvril-cart")
     if (savedCart) {
       setCart(JSON.parse(savedCart))
     }

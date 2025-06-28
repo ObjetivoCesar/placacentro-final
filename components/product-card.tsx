@@ -67,10 +67,10 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
         )}
       </CardContent>
 
-      <CardFooter className="p-4 pt-0">
+      <CardFooter className="p-4 pt-0 flex flex-col gap-2">
         {product.stock > 0 ? (
-          <div className="w-full space-y-3">
-            <div className="flex items-center justify-center space-x-3">
+          <>
+            <div className="flex items-center justify-center space-x-3 mb-2">
               <Button
                 variant="outline"
                 size="sm"
@@ -80,9 +80,7 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
               >
                 <Minus className="h-3 w-3" />
               </Button>
-
               <span className="font-medium min-w-[2rem] text-center">{quantity}</span>
-
               <Button
                 variant="outline"
                 size="sm"
@@ -93,12 +91,19 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
                 <Plus className="h-3 w-3" />
               </Button>
             </div>
-
             <Button onClick={handleAddToCart} className="w-full bg-green-600 hover:bg-green-700 text-white" size="sm">
               <ShoppingCart className="h-4 w-4 mr-2" />
               Añadir al Carrito
             </Button>
-          </div>
+            <a
+              href={`/productos/${product.id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full block mt-1 text-center bg-blue-700 hover:bg-blue-800 text-white py-2 rounded font-semibold text-sm transition-colors"
+            >
+              Ver detalles
+            </a>
+          </>
         ) : (
           <Button disabled className="w-full" size="sm">
             Sin Stock

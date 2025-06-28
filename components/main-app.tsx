@@ -75,8 +75,8 @@ export default function MainApp() {
                 </div>
               </div>
               <div>
-                <h1 className="text-xl font-bold text-white">Placacentro</h1>
-                <p className="text-xs text-orange-400">Masisa Decomaderas</p>
+                <h1 className="text-xl font-bold text-white">DISTRIBUIDORA DE ALUMINIO Y VIDRIO</h1>
+                <p className="text-xs text-orange-400">Aluvril</p>
               </div>
             </div>
           </div>
@@ -186,7 +186,7 @@ export default function MainApp() {
                   <div>
                     <h3 className="text-3xl font-bold text-gray-800 mb-6">Más de 20 años de experiencia</h3>
                     <p className="text-gray-600 mb-6 leading-relaxed">
-                      En Placacentro Masisa Decomaderas somos especialistas en brindar soluciones integrales para
+                      En DISTRIBUIDORA DE ALUMINIO Y VIDRIO somos especialistas en brindar soluciones integrales para
                       carpinteros y profesionales de la construcción. Nuestro compromiso es ofrecer productos de la más
                       alta calidad y un servicio excepcional.
                     </p>
@@ -204,7 +204,7 @@ export default function MainApp() {
                   <div className="relative">
                     <Image
                       src="/images/instalaciones.jpeg"
-                      alt="Instalaciones Placacentro"
+                      alt="Instalaciones Aluvril"
                       width={600}
                       height={400}
                       className="rounded-lg shadow-lg"

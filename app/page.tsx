@@ -51,8 +51,8 @@ export default function HomePage() {
           />
           <div className="w-40 h-40 rounded-full bg-gradient-to-tr from-orange-500/80 to-orange-300/40 shadow-2xl flex items-center justify-center animate-pulse z-10">
             <Image
-              src="/images/logo-simple.png"
-              alt="Placacentro"
+              src="/images/logo-simple.webp"
+              alt="DISTRIBUIDORA DE ALUMINIO Y VIDRIO"
               width={100}
               height={100}
               className="rounded-full"
@@ -60,10 +60,10 @@ export default function HomePage() {
           </div>
         </div>
         <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 text-center drop-shadow-lg">
-          Placacentro Software
+          DISTRIBUIDORA DE ALUMINIO Y VIDRIO
         </h1>
         <p className="text-orange-400 text-base md:text-lg font-medium text-center mb-6 max-w-xs">
-          Proyecto Placacentro Decomaderas
+          Proyecto Aluvril
         </p>
       </div>
       
