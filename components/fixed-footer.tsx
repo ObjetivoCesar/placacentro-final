@@ -42,8 +42,7 @@ export default function FixedFooter({ activeSection, onSectionChange }: FixedFoo
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-[#23232a]/95 backdrop-blur-md border-t border-[#23232a] px-4 py-2 z-[60] shadow-2xl">
-      {/* Curved top border */}
-      <div className="absolute left-1/2 -top-4 -translate-x-1/2 w-16 h-4 bg-[#23232a]/95 backdrop-blur-md rounded-t-full"></div>
+      {/* Eliminar el div decorativo de media luna (rounded-t-full, bg-gradient, blur, etc.) */}
       <div className="flex items-center justify-around pt-2 max-w-md mx-auto">
         {/* Chat */}
         <button onClick={handleChatClick} className="flex flex-col items-center space-y-1 p-2">

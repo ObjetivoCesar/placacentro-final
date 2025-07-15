@@ -409,8 +409,6 @@ const CotizacionForm = () => {
                   </Select>
                 </div>
                 <div className="md:col-span-2">
-                  <Label>Pegado de Bordo</Label>
-                  <BordoSelector value={medidaActual.tipoBordo} onChange={value => setMedidaActual({...medidaActual, tipoBordo: value})} />
                 </div>
                 <div>
                   <Label htmlFor="cantoBordo">Tipo de Canto</Label>
