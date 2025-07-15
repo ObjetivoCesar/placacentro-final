@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
-import { Trash2, Upload, Plus, Mic, Camera } from 'lucide-react'
+import { Trash2, Upload, Plus, Mic, Camera, ShoppingCart } from 'lucide-react'
 import { toast } from 'sonner'
 import BordoSelector from './BordoSelector.jsx'
 import { processImageWithOpenAI, sendToWhatsApp } from '@/lib/imageUtils.js'
@@ -445,7 +445,7 @@ const CotizacionForm = () => {
         {/* Sección 3: Imágenes de Referencia */}
         <Card>
           <CardHeader>
-            <CardTitle>Imágenes de Referencia</CardTitle>
+            <CardTitle>Sube la foto de tu lista</CardTitle>
           </CardHeader>
           <CardContent>
             <div id="imagenes-referencia" className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
@@ -460,8 +460,9 @@ const CotizacionForm = () => {
                 id="upload-images"
               />
               <Button asChild variant="outline">
-                <label htmlFor="upload-images" className="cursor-pointer">
-                  Seleccionar Imágenes
+                <label htmlFor="upload-images" className="cursor-pointer flex items-center gap-2 justify-center">
+                  <Camera className="w-4 h-4" />
+                  Sube tu lista
                 </label>
               </Button>
               <p className="text-sm text-gray-500 mt-2">Máximo 10MB por imagen</p>
@@ -577,8 +578,9 @@ const CotizacionForm = () => {
             <Button 
               onClick={enviarCotizacion}
               disabled={isLoading}
-              className="w-full bg-green-600 hover:bg-green-700 text-white mt-4"
+              className="w-full bg-green-600 hover:bg-green-700 text-white mt-4 flex items-center justify-center gap-2"
             >
+              <ShoppingCart className="w-5 h-5" />
               {isLoading ? 'Enviando...' : 'Enviar Cotización'}
             </Button>
           </CardContent>

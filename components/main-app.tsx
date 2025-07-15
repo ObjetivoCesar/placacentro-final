@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Scissors, Wrench, ArrowRight } from "lucide-react"
+import { Scissors, Wrench, ArrowRight, Camera, ShoppingCart } from "lucide-react"
 import Image from "next/image"
 import EcommerceSection from "@/components/ecommerce-section"
 import OptimizationSection from "@/components/optimization-section"
@@ -116,21 +116,21 @@ export default function MainApp() {
                       <div className="space-y-2 text-sm text-blue-100 mb-8">
                         <div className="flex items-center space-x-2">
                           <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
-                          <span>Cálculo automático de cortes</span>
+                          <span>Ingresa tus datos</span>
                         </div>
                         <div className="flex items-center space-x-2">
                           <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
-                          <span>Minimización de desperdicios</span>
+                          <span>Envía la lista por foto, escribiendo o por audio</span>
                         </div>
                         <div className="flex items-center space-x-2">
                           <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
-                          <span>Reportes detallados</span>
+                          <span>Chatea y haz los cambios</span>
                         </div>
                       </div>
 
                       <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
                         <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium">Comenzar</span>
+                          <span className="text-sm font-medium flex items-center gap-2"><Camera className="w-4 h-4" />Sube tu lista</span>
                           <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
                             <ArrowRight className="h-4 w-4 text-blue-600" />
                           </div>
@@ -172,7 +172,7 @@ export default function MainApp() {
 
                       <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
                         <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium">Ver Catálogo</span>
+                          <span className="text-sm font-medium flex items-center gap-2"><ShoppingCart className="w-4 h-4" />Ver Catálogo</span>
                           <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
                             <ArrowRight className="h-4 w-4 text-green-600" />
                           </div>
