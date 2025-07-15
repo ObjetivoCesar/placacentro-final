@@ -36,6 +36,33 @@ export default function ProductClient({ product, related }: ProductClientProps) 
     if (section === 'optimization') router.push('/');
   };
 
+  // --- Lógica para agregar al carrito ---
+  const handleAddToCart = () => {
+    if (!product || quantity < 1) return;
+    const cartKey = "placacentro-cart";
+    let cart = [];
+    try {
+      const saved = localStorage.getItem(cartKey);
+      if (saved) cart = JSON.parse(saved);
+    } catch {}
+    const idx = cart.findIndex((item: any) => item.product.id === product.id);
+    if (idx >= 0) {
+      cart[idx].quantity += quantity;
+    } else {
+      cart.push({ product, quantity });
+    }
+    localStorage.setItem(cartKey, JSON.stringify(cart));
+    window.dispatchEvent(new Event("storage"));
+  };
+
+  // --- Lógica para comprar ahora (mensaje al chat) ---
+  const handleBuyNow = () => {
+    if (!product || quantity < 1) return;
+    const msg = `Quiero comprar ahora el producto: ${product.name}\nCódigo: ${product.id}\nCantidad: ${quantity}\nPrecio: $${product.price}\nCategoría: ${product.category || 'General'}`;
+    window.dispatchEvent(new CustomEvent("setChatInput", { detail: msg }));
+    window.dispatchEvent(new Event("openFloatingChat"));
+  };
+
   return (
     <AppShell activeSection="ecommerce" setActiveSection={setActiveSection}>
       <div className="min-h-screen bg-gray-50 pb-20 flex flex-col items-center">
@@ -79,9 +106,19 @@ export default function ProductClient({ product, related }: ProductClientProps) 
               <span className="text-gray-500">unidades</span>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 mt-4">
-              <button className="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg text-lg transition">¡Comprar ahora!</button>
-              <button className="flex-1 bg-white border border-orange-500 text-orange-500 font-bold py-3 px-6 rounded-lg text-lg hover:bg-orange-50 transition">Agregar al carrito</button>
-              <button className="flex-1 bg-white border border-gray-300 text-gray-500 font-bold py-3 px-6 rounded-lg text-lg hover:bg-gray-100 transition">♡ Favorito</button>
+              <button
+                className="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg text-lg transition"
+                onClick={handleBuyNow}
+              >
+                ¡Comprar ahora!
+              </button>
+              <button
+                className="flex-1 bg-white border border-orange-500 text-orange-500 font-bold py-3 px-6 rounded-lg text-lg hover:bg-orange-50 transition"
+                onClick={handleAddToCart}
+              >
+                Agregar al carrito
+              </button>
+              {/* Botón de favorito eliminado */}
             </div>
             {/* Resumen corto/descripción clave */}
             <div className="mt-4 text-gray-700 text-base bg-gray-50 rounded-xl p-4 shadow-sm">
