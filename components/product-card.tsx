@@ -34,7 +34,7 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
   }
 
   return (
-    <Card className="h-full flex flex-col hover:shadow-lg transition-shadow">
+    <Card className="h-full flex flex-col hover:shadow-lg transition-shadow scale-90 md:scale-100 p-2 md:p-4 mb-2 md:mb-0">
       <CardHeader className="p-4">
         <div className="aspect-square relative mb-4 bg-gray-100 rounded-lg overflow-hidden">
           <ProductImage

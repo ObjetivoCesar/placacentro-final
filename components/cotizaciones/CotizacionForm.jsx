@@ -16,6 +16,7 @@ import CameraCapture from './CameraCapture.jsx'
 import FileUpload from './FileUpload.jsx'
 import { formatCotizacionMensaje } from '@/lib/messageFormatter'
 import { parseMedidasFromText } from '@/lib/parseMedidas'
+import { useRef, useEffect } from 'react'
 
 const CotizacionForm = () => {
   
@@ -47,6 +48,15 @@ const CotizacionForm = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [transcripcionVoz, setTranscripcionVoz] = useState([])
   const [transcripcionImagen, setTranscripcionImagen] = useState([])
+  const resumenRef = useRef(null)
+  const textareaComentariosRef = useRef(null)
+
+  useEffect(() => {
+    if (textareaComentariosRef.current) {
+      textareaComentariosRef.current.style.height = 'auto';
+      textareaComentariosRef.current.style.height = textareaComentariosRef.current.scrollHeight + 'px';
+    }
+  }, [formData.comentarios])
 
   // Opciones para los selectores
   const tiposPlanchas = ['MDF', 'Melamina', 'Terciado', 'Aglomerado']
@@ -168,19 +178,17 @@ const CotizacionForm = () => {
     setIsLoading(true)
 
     try {
-      const userId = getOrCreateBrowserUserId()
-      const fechaActual = new Date().toISOString()
-      // Formatear mensaje para el chat
-      const cotizacionMensaje = formatCotizacionMensaje({
-        formData,
-        medidas,
-        transcripcionVoz,
-        transcripcionImagen,
-        imagenes
-      })
-      
-      // Enviar resumen de cotización al chat flotante en vez de hacer fetch
-      window.dispatchEvent(new CustomEvent("setChatInput", { detail: cotizacionMensaje }))
+      let resumen = resumenRef.current ? resumenRef.current.innerText : ''
+      // Limpiar saltos de línea dobles y espacios al inicio/final
+      resumen = resumen.replace(/\n{2,}/g, '\n').trim()
+      // Forzar doble salto de línea para mejor visualización en el chat
+      resumen = resumen.replace(/\n/g, '\n\n')
+      if (!resumen) {
+        toast.error("No se pudo obtener el resumen de cotización")
+        setIsLoading(false)
+        return
+      }
+      window.dispatchEvent(new CustomEvent("setChatInput", { detail: resumen }))
       window.dispatchEvent(new Event("openFloatingChat"))
       toast.success("El resumen de tu cotización ha sido copiado al chat. Revísalo y envíalo para continuar.")
       
@@ -468,6 +476,7 @@ const CotizacionForm = () => {
           </CardHeader>
           <CardContent>
             <Textarea
+              ref={textareaComentariosRef}
               value={formData.comentarios}
               onChange={(e) => setFormData({...formData, comentarios: e.target.value})}
               placeholder="Comentarios adicionales..."
@@ -483,92 +492,92 @@ const CotizacionForm = () => {
           <CardHeader>
             <CardTitle>Resumen de Cotización</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Información Básica */}
-            <div>
-              <h4 className="font-semibold mb-2">Información Básica</h4>
-              <div className="space-y-1 text-sm">
-                <p><span className="font-medium">Tipo:</span> {formData.tipoPlancha || <span className="text-gray-400">-</span>}</p>
-                <p><span className="font-medium">Color:</span> {formData.color || <span className="text-gray-400">-</span>}</p>
-                <p><span className="font-medium">Vendedora:</span> {formData.vendedora || <span className="text-gray-400">-</span>}</p>
-                <p><span className="font-medium">Cliente:</span> {formData.nombreCliente || <span className="text-gray-400">-</span>}</p>
-                <p><span className="font-medium">Teléfono:</span> {formData.telefono || <span className="text-gray-400">-</span>}</p>
-                <p><span className="font-medium">Dirección:</span> {formData.direccionTaller || <span className="text-gray-400">-</span>}</p>
-                <p><span className="font-medium">Entrega:</span> {formData.entrega === 'domicilio' ? <b>A Domicilio</b> : <b>En Sucursal</b>}</p>
-                <p><span className="font-medium">Fecha:</span> <b>{new Date().toLocaleDateString('es-ES')}</b></p>
-              </div>
-            </div>
-
-            {/* Lista de Medidas */}
-            <div>
-              <h4 className="font-semibold mb-2">Medidas</h4>
-              {medidas.length === 0 ? (
-                <div className="text-gray-300 text-sm">
-                  No hay medidas agregadas.
-                  {transcripcionVoz.length > 0 && (
-                    <div className="mt-2 text-gray-400">
-                      <span className="font-medium">Transcripción de Voz:</span>
-                      {transcripcionVoz.map((t, i) => (
-                        <div key={i} className="italic bg-slate-800 text-white rounded px-2 py-1 my-1">{t}</div>
-                      ))}
-                    </div>
+          <CardContent className="p-6 pt-0">
+            <div ref={resumenRef} className="whitespace-pre-line">
+              {/* Información Básica */}
+              <div>
+                <h4 className="font-semibold mb-2">Información Básica</h4>
+                <div className="space-y-1 text-sm">
+                  <p><span className="font-medium">Tipo:</span> {formData.tipoPlancha || <span className="text-gray-400">-</span>}</p>
+                  <p><span className="font-medium">Color:</span> {formData.color || <span className="text-gray-400">-</span>}</p>
+                  <p><span className="font-medium">Vendedora:</span> {formData.vendedora || <span className="text-gray-400">-</span>}</p>
+                  <p><span className="font-medium">Cliente:</span> {formData.nombreCliente || <span className="text-gray-400">-</span>}</p>
+                  <p><span className="font-medium">Teléfono:</span> {formData.telefono || <span className="text-gray-400">-</span>}</p>
+                  <p><span className="font-medium">Dirección:</span> {formData.direccionTaller || <span className="text-gray-400">-</span>}</p>
+                  <p><span className="font-medium">Entrega:</span> {formData.entrega === 'domicilio' ? <b>A Domicilio</b> : <b>En Sucursal</b>}</p>
+                  {formData.entrega === 'sucursal' && (
+                    <p><span className="font-medium">Sucursal:</span> {formData.sucursal || <span className="text-gray-400">-</span>}</p>
                   )}
+                  <p><span className="font-medium">Fecha:</span> <b>{new Date().toLocaleDateString('es-ES')}</b></p>
                 </div>
-              ) : (
-                <ul className="text-sm list-disc pl-5 space-y-1">
-                  {medidas.map((medida, idx) => (
-                    <li key={idx}>{medida.descripcion}</li>
-                  ))}
-                </ul>
-              )}
-              {/* Mostrar todas las transcripciones de voz debajo de las medidas */}
-              {transcripcionVoz.length > 0 && medidas.length > 0 && (
-                <div className="mt-4">
-                  <span className="font-semibold">Transcripción de Voz</span>:
-                  {transcripcionVoz.map((t, i) => (
-                    <div key={i} className="italic bg-slate-800 text-white rounded px-2 py-1 my-1">{t}</div>
-                  ))}
+              </div>
+              {/* Lista de Medidas */}
+              <div>
+                <h4 className="font-semibold mb-2">Medidas</h4>
+                {medidas.length === 0 ? (
+                  <div className="text-gray-300 text-sm">
+                    No hay medidas agregadas.
+                    {transcripcionVoz.length > 0 && (
+                      <div className="mt-2 text-gray-400">
+                        <span className="font-medium">Transcripción de Voz:</span>
+                        {transcripcionVoz.map((t, i) => (
+                          <div key={i} className="italic bg-slate-800 text-white rounded px-2 py-1 my-1">{t}</div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <ul className="text-sm list-disc pl-5 space-y-1">
+                    {medidas.map((medida, idx) => (
+                      <li key={idx}>{medida.descripcion}</li>
+                    ))}
+                  </ul>
+                )}
+                {/* Mostrar todas las transcripciones de voz debajo de las medidas */}
+                {transcripcionVoz.length > 0 && medidas.length > 0 && (
+                  <div className="mt-4">
+                    <span className="font-semibold">Transcripción de Voz</span>:
+                    {transcripcionVoz.map((t, i) => (
+                      <div key={i} className="italic bg-slate-800 text-white rounded px-2 py-1 my-1">{t}</div>
+                    ))}
+                  </div>
+                )}
+                {/* Mostrar todas las transcripciones de imagen debajo de las medidas */}
+                {transcripcionImagen.length > 0 && medidas.length > 0 && (
+                  <div className="mt-4">
+                    <span className="font-semibold">Transcripción de Imagen</span>:
+                    {transcripcionImagen.map((t, i) => (
+                      <div key={i} className="italic bg-slate-800 text-white rounded px-2 py-1 my-1">{t}</div>
+                    ))}
+                  </div>
+                )}
+              </div>
+              {/* Imágenes */}
+              {imagenes.length > 0 && (
+                <div>
+                  <h4 className="font-semibold mb-2">Imágenes ({imagenes.length})</h4>
+                  <div className="space-y-2">
+                    {imagenes.map((imagen, index) => (
+                      <div key={index} className="p-2 bg-gray-50 rounded text-sm">
+                        <p className="font-medium">{imagen.nombre}</p>
+                        <p className="text-gray-600 text-xs">{imagen.transcripcion}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
-              {/* Mostrar todas las transcripciones de imagen debajo de las medidas */}
-              {transcripcionImagen.length > 0 && medidas.length > 0 && (
-                <div className="mt-4">
-                  <span className="font-semibold">Transcripción de Imagen</span>:
-                  {transcripcionImagen.map((t, i) => (
-                    <div key={i} className="italic bg-slate-800 text-white rounded px-2 py-1 my-1">{t}</div>
-                  ))}
+              {/* Comentarios */}
+              {formData.comentarios && (
+                <div>
+                  <h4 className="font-semibold mb-2">Comentarios</h4>
+                  <p className="text-sm text-gray-600">{formData.comentarios}</p>
                 </div>
               )}
             </div>
-
-            {/* Imágenes */}
-            {imagenes.length > 0 && (
-              <div>
-                <h4 className="font-semibold mb-2">Imágenes ({imagenes.length})</h4>
-                <div className="space-y-2">
-                  {imagenes.map((imagen, index) => (
-                    <div key={index} className="p-2 bg-gray-50 rounded text-sm">
-                      <p className="font-medium">{imagen.nombre}</p>
-                      <p className="text-gray-600 text-xs">{imagen.transcripcion}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Comentarios */}
-            {formData.comentarios && (
-              <div>
-                <h4 className="font-semibold mb-2">Comentarios</h4>
-                <p className="text-sm text-gray-600">{formData.comentarios}</p>
-              </div>
-            )}
-
-            {/* Botón de Envío */}
             <Button 
               onClick={enviarCotizacion}
               disabled={isLoading}
-              className="w-full bg-green-600 hover:bg-green-700 text-white"
+              className="w-full bg-green-600 hover:bg-green-700 text-white mt-4"
             >
               {isLoading ? 'Enviando...' : 'Enviar Cotización'}
             </Button>

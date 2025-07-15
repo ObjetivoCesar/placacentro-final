@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Search, ShoppingCart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -23,6 +23,9 @@ export default function EcommerceSection() {
   const [isCartOpen, setIsCartOpen] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+  const tabsListRef = useRef<HTMLDivElement>(null)
+  const [showLeftArrow, setShowLeftArrow] = useState(false)
+  const [showRightArrow, setShowRightArrow] = useState(false)
 
   useEffect(() => {
     loadProducts()
@@ -39,6 +42,13 @@ export default function EcommerceSection() {
     // Disparar evento para actualizar el contador del footer
     window.dispatchEvent(new Event("storage"))
   }, [cart])
+
+  const scrollTabs = (dir: 'left' | 'right') => {
+    const el = tabsListRef.current
+    if (!el) return
+    const amount = el.clientWidth * 0.7
+    el.scrollBy({ left: dir === 'left' ? -amount : amount, behavior: 'smooth' })
+  }
 
   const loadProducts = async () => {
     try {
@@ -114,6 +124,23 @@ export default function EcommerceSection() {
   const categories = [...new Set(products.map((product) => product.category))]
   const cartItemsCount = cart.reduce((total, item) => total + item.quantity, 0)
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const el = tabsListRef.current
+      if (!el) return
+      setShowLeftArrow(el.scrollLeft > 5)
+      setShowRightArrow(el.scrollLeft + el.clientWidth < el.scrollWidth - 5)
+    }
+    const el = tabsListRef.current
+    if (el) {
+      el.addEventListener('scroll', handleScroll)
+      handleScroll()
+    }
+    return () => {
+      if (el) el.removeEventListener('scroll', handleScroll)
+    }
+  }, [filteredProducts, categories, activeTab])
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -165,7 +192,7 @@ export default function EcommerceSection() {
       </div>
 
       {/* Filters and Search */}
-      <div className="flex flex-col md:flex-row gap-4 mb-6">
+      <div className="flex flex-col md:flex-row gap-4 mb-2 mt-2 mx-2">
         <div className="flex-1">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -174,7 +201,7 @@ export default function EcommerceSection() {
               placeholder="Buscar productos..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 rounded-full border-gray-200"
+              className="pl-10 rounded-full border-gray-200 mb-2"
             />
           </div>
         </div>
@@ -182,21 +209,42 @@ export default function EcommerceSection() {
 
       {/* Tabs de categorías */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="mb-6 flex flex-wrap gap-2 bg-white rounded-xl p-2 shadow">
-          <TabsTrigger value="all" className="min-w-[120px]">Todas las categorías</TabsTrigger>
-          {categories.map((category) => (
-            <TabsTrigger key={category} value={category} className="min-w-[120px] capitalize">{category}</TabsTrigger>
+        <TabsList ref={tabsListRef} className="relative mb-4 mx-2 flex gap-2 bg-white rounded-xl p-2 shadow overflow-x-auto whitespace-nowrap flex-nowrap pl-4">
+          {showLeftArrow && (
+            <button onClick={() => scrollTabs('left')} className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 rounded-full p-1 shadow-md text-gray-500 hover:bg-white" style={{ pointerEvents: 'auto' }}>
+              &#8592;
+            </button>
+          )}
+          {showRightArrow && (
+            <button onClick={() => scrollTabs('right')} className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 rounded-full p-1 shadow-md text-gray-500 hover:bg-white" style={{ pointerEvents: 'auto' }}>
+              &#8594;
+            </button>
+          )}
+          {["all", ...categories].map((category, idx) => (
+            <>
+              {idx !== 0 && <span className="text-gray-300 mx-1 select-none">|</span>}
+              <TabsTrigger key={category} value={category} className="min-w-[120px] capitalize">{category === "all" ? "Todas las categorías" : category}</TabsTrigger>
+            </>
           ))}
         </TabsList>
+        <div className="mt-2 mb-4 text-gray-600 text-sm px-4">
+          Mostrando {filteredProducts.filter(p => activeTab === "all" || p.category === activeTab).length} de {products.length} productos
+        </div>
         {/* Contenido de cada tab */}
         {["all", ...categories].map((category) => (
           <TabsContent key={category} value={category} className="w-full">
-            <div className="mb-4">
-              <p className="text-gray-600">
-                Mostrando {filteredProducts.filter(p => category === "all" || p.category === category).length} de {products.length} productos
-              </p>
+            {/* Slide horizontal en móvil */}
+            <div className="flex flex-nowrap overflow-x-auto gap-4 px-2 md:hidden">
+              {filteredProducts
+                .filter((product) => category === "all" || product.category === category)
+                .map((product) => (
+                  <div key={product.id} className="min-w-[80vw] max-w-xs flex-shrink-0">
+                    <ProductCard product={product} onAddToCart={addToCart} />
+                  </div>
+                ))}
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {/* Grid en escritorio */}
+            <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredProducts
                 .filter((product) => category === "all" || product.category === category)
                 .map((product) => (
