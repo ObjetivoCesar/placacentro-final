@@ -28,7 +28,7 @@ export default function FloatingChat() {
   const [messages, setMessages] = useState<Message[]>(() => {
     // Recuperar historial del localStorage
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('aluvril-chat-history')
+      const saved = localStorage.getItem('placacentro-chat-history')
       if (saved) {
         try {
           const parsed = JSON.parse(saved)
@@ -43,7 +43,7 @@ export default function FloatingChat() {
       {
         id: "1",
         type: "bot",
-        content: "¡Hola! Soy Viviana de Aluvril. ¿En qué puedo ayudarte?",
+        content: "¡Hola! Soy Viviana de Placacentro. ¿En qué puedo ayudarte?",
         timestamp: new Date(),
       },
     ]
@@ -52,6 +52,7 @@ export default function FloatingChat() {
   const [isTyping, setIsTyping] = useState(false)
   const [userId, setUserId] = useState<string>("")
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -97,6 +98,13 @@ export default function FloatingChat() {
     }
   }, [])
 
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
+    }
+  }, [inputMessage])
+
   const sendMessage = async () => {
     if (!inputMessage.trim()) {
       console.log("⚠️ Mensaje vacío, no enviando")
@@ -123,7 +131,7 @@ export default function FloatingChat() {
 
     try {
       // Obtener información del carrito
-      const cartData = localStorage.getItem("aluvril-cart")
+      const cartData = localStorage.getItem("placacentro-cart")
       let parsedCartData = []
 
       if (cartData) {
@@ -162,7 +170,7 @@ export default function FloatingChat() {
         // MENSAJE
         message: currentMessage,
         timestamp: new Date().toISOString(),
-        source: "aluvril-floating-chat",
+        source: "placacentro-floating-chat",
 
         // CARRITO
         cartData: parsedCartData,
@@ -248,7 +256,7 @@ export default function FloatingChat() {
   useEffect(() => {
     // Guardar historial en localStorage cada vez que cambian los mensajes
     if (typeof window !== 'undefined') {
-      localStorage.setItem('aluvril-chat-history', JSON.stringify(messages))
+      localStorage.setItem('placacentro-chat-history', JSON.stringify(messages))
     }
   }, [messages])
 
@@ -257,163 +265,143 @@ export default function FloatingChat() {
   }
 
   return (
-    <div className="fixed bottom-32 right-6 z-[120]">
-      <Card className={`w-[368px] shadow-2xl transition-all duration-300 ${isMinimized ? "h-14" : "h-[529px]"}`}>
-        <CardHeader className="p-4 bg-green-600 text-white rounded-t-lg">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                <Bot className="h-4 w-4 text-white" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-sm">Asistente Virtual</h3>
-                <p className="text-xs text-green-100">En línea • ID: {userId.slice(-6)}</p>
-              </div>
+    <div
+      className={`fixed bottom-24 right-6 z-[9999] flex flex-col shadow-2xl rounded-2xl bg-white border border-gray-200 transition-all duration-300
+        w-[315px] h-[600px] md:w-[425px] md:h-[810px] max-w-full max-h-[90vh]
+        sm:w-[90vw] sm:h-[80vh] sm:bottom-2 sm:right-2
+        border-b-4 border-green-600
+      `}
+    >
+      <CardHeader className="p-4 bg-green-600 text-white rounded-t-lg">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+              <Bot className="h-4 w-4 text-white" />
             </div>
-            <div className="flex items-center space-x-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsMinimized(!isMinimized)}
-                className="text-white hover:bg-green-500 h-8 w-8 p-0"
-              >
-                <Minimize2 className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsOpen(false)}
-                className="text-white hover:bg-green-500 h-8 w-8 p-0"
-              >
-                <X className="h-4 w-4" />
-              </Button>
+            <div>
+              <h3 className="font-semibold text-sm">Asistente Virtual</h3>
+              <p className="text-xs text-green-100">En línea • ID: {userId.slice(-6)}</p>
             </div>
           </div>
-        </CardHeader>
+          <div className="flex items-center space-x-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsMinimized(!isMinimized)}
+              className="text-white hover:bg-green-500 h-8 w-8 p-0"
+            >
+              <Minimize2 className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsOpen(false)}
+              className="text-white hover:bg-green-500 h-8 w-8 p-0"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </CardHeader>
 
-        {!isMinimized && (
-          <CardContent className="p-0 flex flex-col h-[460px]">
-            {/* Messages Area */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3">
-              {messages.map((message) => (
-                <div key={message.id} className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}>
-                  <div className={`flex items-start space-x-2 max-w-sm`}>
-                    {message.type === "bot" && (
-                      <div className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center flex-shrink-0">
-                        <Bot className="h-3 w-3 text-white" />
-                      </div>
-                    )}
+      {/* Input Area al inicio */}
+      <div className="p-3 border-b border-gray-200 bg-[#23232a]">
+        <div className="flex items-center space-x-2">
+          <div className="flex-1 relative">
+            <textarea
+              ref={textareaRef}
+              value={inputMessage}
+              onChange={(e) => setInputMessage(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Escribe tu mensaje..."
+              rows={1}
+              className="w-full text-sm border-gray-700 rounded-2xl bg-[#23232a] text-white focus:ring-2 focus:ring-green-500 focus:border-green-500 pr-12 pl-4 py-2 resize-none min-h-[60px] max-h-[160px] placeholder:text-gray-400"
+              style={{ fontSize: "14px", lineHeight: "20px", overflow: 'hidden' }}
+            />
+          </div>
+          <Button
+            onClick={sendMessage}
+            disabled={!inputMessage.trim() || isTyping || !userId}
+            className="bg-green-600 hover:bg-green-700 text-white rounded-full h-10 w-10 p-0 flex-shrink-0"
+            size="sm"
+          >
+            <Send className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
 
-                    <div
-                      className={`rounded-2xl px-3 py-2 text-sm ${
-                        message.type === "user"
-                          ? "bg-green-600 text-white rounded-br-sm"
-                          : "bg-gray-100 text-gray-800 rounded-bl-sm"
-                      }`}
-                    >
-                      {message.isMarkdown ? (
-                        <ReactMarkdown
-                          // @ts-expect-error: className no está en los tipos de ReactMarkdown pero sí es soportado
-                          className="leading-relaxed prose prose-sm max-w-none"
-                          components={{
-                            p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
-                            strong: ({ children }) => (
-                              <strong className="font-semibold text-gray-900">{children}</strong>
-                            ),
-                            ul: ({ children }) => <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>,
-                            li: ({ children }) => <li className="text-sm">{children}</li>,
-                            h1: ({ children }) => <h1 className="font-bold text-base mb-2">{children}</h1>,
-                            h2: ({ children }) => <h2 className="font-bold text-sm mb-1">{children}</h2>,
-                            h3: ({ children }) => <h3 className="font-semibold text-sm mb-1">{children}</h3>,
-                            // Personalización para imágenes en markdown
-                            img: ({ src, alt }) => (
-                              <img
-                                src={src ?? ''}
-                                alt={alt ?? ''}
-                                className="rounded-lg max-w-full h-auto my-2 border border-gray-200 shadow"
-                                style={{ maxHeight: 200 }}
-                              />
-                            ),
-                          }}
-                        >
-                          {message.content}
-                        </ReactMarkdown>
-                      ) : (
-                        <p className="leading-relaxed">{message.content}</p>
-                      )}
-                      <p className={`text-xs mt-1 ${message.type === "user" ? "text-green-100" : "text-gray-500"}`}>
-                        {message.timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                      </p>
-                    </div>
-
-                    {message.type === "user" && (
-                      <div className="w-6 h-6 bg-gray-400 rounded-full flex items-center justify-center flex-shrink-0">
-                        <User className="h-3 w-3 text-white" />
-                      </div>
-                    )}
+      {/* Área de mensajes debajo */}
+      <CardContent className="p-0 flex flex-col h-[calc(100%-140px)]">
+        {/* Messages Area */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-3">
+          {messages.map((message) => (
+            <div key={message.id} className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}>
+              <div className={`flex items-start space-x-2 max-w-sm`}>
+                {message.type === "bot" && (
+                  <div className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Bot className="h-3 w-3 text-white" />
                   </div>
-                </div>
-              ))}
-
-              {/* Typing Indicator */}
-              {isTyping && (
-                <div className="flex justify-start">
-                  <div className="flex items-start space-x-2">
-                    <div className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center">
-                      <Bot className="h-3 w-3 text-white" />
-                    </div>
-                    <div className="bg-gray-100 rounded-2xl rounded-bl-sm px-3 py-2">
-                      <div className="flex space-x-1">
-                        <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></div>
-                        <div
-                          className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"
-                          style={{ animationDelay: "0.1s" }}
-                        ></div>
-                        <div
-                          className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"
-                          style={{ animationDelay: "0.2s" }}
-                        ></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              <div ref={messagesEndRef} />
-            </div>
-
-            {/* Input Area - CORREGIDO: Styling mejorado para evitar superposiciones */}
-            <div className="border-t border-gray-100 bg-[#23232a]">
-              <div className="p-3">
-                <div className="flex items-center space-x-2">
-                  <div className="flex-1 relative">
-                    <textarea
-                      value={inputMessage}
-                      onChange={(e) => setInputMessage(e.target.value)}
-                      onKeyPress={handleKeyPress}
-                      placeholder="Escribe tu mensaje..."
-                      rows={4}
-                      className="w-full text-sm border-gray-700 rounded-2xl bg-[#23232a] text-white focus:ring-2 focus:ring-green-500 focus:border-green-500 pr-12 pl-4 py-2 resize-vertical min-h-[80px] max-h-[200px] placeholder:text-gray-400"
-                      style={{
-                        fontSize: "14px",
-                        lineHeight: "20px",
-                      }}
-                    />
-                  </div>
-                  <Button
-                    onClick={sendMessage}
-                    disabled={!inputMessage.trim() || isTyping || !userId}
-                    className="bg-green-600 hover:bg-green-700 text-white rounded-full h-10 w-10 p-0 flex-shrink-0"
-                    size="sm"
+                )}
+                <div
+                  className={`rounded-2xl px-3 py-2 text-sm ${
+                    message.type === "user"
+                      ? "bg-green-600 text-white rounded-br-sm"
+                      : "bg-gray-100 text-gray-800 rounded-bl-sm"
+                  }`}
+                >
+                  <ReactMarkdown
+                    components={{
+                      p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+                      strong: ({ children }) => (
+                        <strong className="font-semibold text-gray-900">{children}</strong>
+                      ),
+                      ul: ({ children }) => <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>,
+                      li: ({ children }) => <li className="text-sm">{children}</li>,
+                      h1: ({ children }) => <h1 className="font-bold text-base mb-2">{children}</h1>,
+                      h2: ({ children }) => <h2 className="font-bold text-sm mb-1">{children}</h2>,
+                      h3: ({ children }) => <h3 className="font-semibold text-sm mb-1">{children}</h3>,
+                      img: ({ src, alt }) => (
+                        <img
+                          src={src ?? ''}
+                          alt={alt ?? ''}
+                          className="rounded-lg max-w-full h-auto my-2 border border-gray-200 shadow"
+                          style={{ maxHeight: 200 }}
+                        />
+                      ),
+                    }}
                   >
-                    <Send className="h-4 w-4" />
-                  </Button>
+                    {message.content}
+                  </ReactMarkdown>
+                  {message.timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                </div>
+                {message.type === "user" && (
+                  <div className="w-6 h-6 bg-gray-400 rounded-full flex items-center justify-center flex-shrink-0">
+                    <User className="h-3 w-3 text-white" />
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+          {/* Typing Indicator */}
+          {isTyping && (
+            <div className="flex justify-start">
+              <div className="flex items-start space-x-2">
+                <div className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center">
+                  <Bot className="h-3 w-3 text-white" />
+                </div>
+                <div className="bg-gray-100 rounded-2xl rounded-bl-sm px-3 py-2">
+                  <div className="flex space-x-1">
+                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></div>
+                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0.1s" }}></div>
+                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
+                  </div>
                 </div>
               </div>
             </div>
-          </CardContent>
-        )}
-      </Card>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+      </CardContent>
     </div>
   )
 }

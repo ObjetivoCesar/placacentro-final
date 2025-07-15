@@ -1,18 +1,18 @@
 import { type NextRequest, NextResponse } from "next/server"
 
 /**
- * API ROUTE: Chat Handler - DISTRIBUIDORA DE ALUMINIO Y VIDRIO (ALUVRIL)
+ * API ROUTE: Chat Handler - PLACACENTRO
  * Siempre asegura que userId se envíe a Make.com
  */
 export async function POST(request: NextRequest) {
   try {
-    console.log("=== CHAT API ALUVRIL: Procesando mensaje ===")
+    console.log("=== CHAT API PLACACENTRO: Procesando mensaje ===")
 
     const chatData = await request.json()
 
     // VALIDACIÓN CRÍTICA: userId es obligatorio
     if (!chatData.userId) {
-      console.error("❌ CRÍTICO: userId faltante en request (ALUVRIL)")
+      console.error("❌ CRÍTICO: userId faltante en request (PLACACENTRO)")
       console.log("Datos recibidos:", Object.keys(chatData))
       return NextResponse.json(
         {
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (!chatData.message) {
-      console.error("❌ Mensaje vacío (ALUVRIL)")
+      console.error("❌ Mensaje vacío (PLACACENTRO)")
       return NextResponse.json(
         {
           error: "Mensaje requerido",
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log("✅ Datos recibidos (ALUVRIL):")
+    console.log("✅ Datos recibidos (PLACACENTRO):")
     console.log("   - UserId:", chatData.userId)
     console.log("   - Mensaje:", chatData.message.substring(0, 50) + "...")
     console.log("   - Items en carrito:", chatData.cartData?.length || 0)
@@ -44,12 +44,12 @@ export async function POST(request: NextRequest) {
 
     // ESTRUCTURA CORREGIDA - USERID EN NIVEL SUPERIOR
     const webhookData = {
-      // IDENTIFICACIÓN EN PRIMER NIVEL (CRÍTICO PARA MAKE.COM - ALUVRIL)
+      // IDENTIFICACIÓN EN PRIMER NIVEL (CRÍTICO PARA MAKE.COM - PLACACENTRO)
       userId: chatData.userId,
       userIdentifier: chatData.userId, // Duplicado para asegurar recepción
 
       // METADATOS DEL MENSAJE
-      source: "aluvril-floating-chat",
+      source: "placacentro-floating-chat",
       type: "chat-with-cart",
       message: chatData.message,
       timestamp: chatData.timestamp || new Date().toISOString(),
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
         sessionInfo: chatData.sessionInfo || {},
       },
 
-      // ORGANIZACIÓN PARA MAKE.COM (ALUVRIL)
+      // ORGANIZACIÓN PARA MAKE.COM (PLACACENTRO)
       folderName: `user_${chatData.userId}`,
       chatSession: {
         sessionId: `${chatData.userId}_${new Date().toISOString().split("T")[0]}`,
@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
         userId: chatData.userId,
         userIdentifier: chatData.userId,
         user_id: chatData.userId,
-        source: "aluvril-ecommerce",
+        source: "placacentro-ecommerce",
         type: "new-order",
         // @ts-expect-error: 'data' es requerido por Make.com aunque no esté en el tipo base
         data: {
@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
           subtotal: chatData.cartSummary?.totalValue || 0,
           timestamp: chatData.timestamp || new Date().toISOString(),
           type: "ecommerce-order",
-          source: "aluvril-ecommerce",
+          source: "placacentro-ecommerce",
           userId: chatData.userId,
           userIdentifier: chatData.userId,
         },
@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    console.log("📤 ENVIANDO A MAKE.COM (ALUVRIL):")
+    console.log("📤 ENVIANDO A MAKE.COM (PLACACENTRO):")
     console.log("   - Webhook URL:", webhookUrl.substring(0, 50) + "...")
     console.log("   - UserId confirmado:", webhookData.userId)
     console.log("   - UserIdentifier:", webhookData.userIdentifier)
@@ -168,13 +168,13 @@ export async function POST(request: NextRequest) {
       console.log("Error details:", errorText)
     }
 
-    console.log("✅ PROCESAMIENTO COMPLETADO (ALUVRIL)")
+    console.log("✅ PROCESAMIENTO COMPLETADO (PLACACENTRO)")
     console.log("   - UserId enviado:", chatData.userId)
     console.log("   - Bot response disponible:", !!botResponse)
 
     return NextResponse.json({
       success: true,
-      message: "Mensaje procesado exitosamente (ALUVRIL)",
+      message: "Mensaje procesado exitosamente (PLACACENTRO)",
       timestamp: new Date().toISOString(),
       cartIncluded: (chatData.cartData?.length || 0) > 0,
       userId: chatData.userId,
@@ -185,9 +185,9 @@ export async function POST(request: NextRequest) {
     console.error("❌ Error procesando mensaje de chat:", err)
     return NextResponse.json({
       success: true,
-      message: "Mensaje recibido con problemas técnicos (ALUVRIL)",
+      message: "Mensaje recibido con problemas técnicos (PLACACENTRO)",
       timestamp: new Date().toISOString(),
-      botResponse: "Tu mensaje ha sido recibido. Un asesor de Aluvril se pondrá en contacto contigo pronto.",
+      botResponse: "Tu mensaje ha sido recibido. Un asesor de Placacentro se pondrá en contacto contigo pronto.",
       error: err.message,
     })
   }

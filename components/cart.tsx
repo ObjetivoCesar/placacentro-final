@@ -36,7 +36,6 @@ export default function Cart({ isOpen, onClose, cart, onUpdateQuantity, onRemove
     // Usar el método universal para obtener el userId
     const userIdentifier = getOrCreateBrowserUserId()
     setUserId(userIdentifier)
-    console.log("🆔 Cart - UserId universal:", userIdentifier)
   }, [])
 
   // Calcular totales
@@ -63,11 +62,6 @@ export default function Cart({ isOpen, onClose, cart, onUpdateQuantity, onRemove
     setSubmitMessage("")
 
     try {
-      console.log("📤 ENVIANDO PEDIDO DESDE CARRITO:")
-      console.log("   - UserId:", userId)
-      console.log("   - WhatsApp:", whatsappNumber)
-      console.log("   - Items:", cart.length)
-
       // DATOS DEL PEDIDO CON USERID (IGUAL QUE EL CHAT)
       const orderData = {
         // USERID INCLUIDO
@@ -89,10 +83,8 @@ export default function Cart({ isOpen, onClose, cart, onUpdateQuantity, onRemove
 
         // METADATOS
         type: "ecommerce-order",
-        source: "aluvril-ecommerce",
+        source: "placacentro-ecommerce",
       }
-
-      console.log("📡 Enviando con userId:", orderData.userId)
 
       const response = await fetch("/api/submit-order", {
         method: "POST",
@@ -107,7 +99,6 @@ export default function Cart({ isOpen, onClose, cart, onUpdateQuantity, onRemove
       }
 
       const result = await response.json()
-      console.log("✅ Pedido enviado exitosamente con userId:", result.userId)
 
       setSubmitMessage("¡Pedido enviado exitosamente! Pronto te contactaremos.")
 
@@ -119,7 +110,6 @@ export default function Cart({ isOpen, onClose, cart, onUpdateQuantity, onRemove
         onClose()
       }, 2000)
     } catch (error) {
-      console.error("❌ Error enviando pedido:", error)
       setSubmitMessage("Error al enviar el pedido. Por favor intenta nuevamente.")
     } finally {
       setIsSubmitting(false)

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import ProductCard from "@/components/product-card"
 import Cart from "@/components/cart"
 import type { Product, CartItem } from "@/types"
@@ -18,7 +19,7 @@ export default function EcommerceSection() {
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([])
   const [cart, setCart] = useState<CartItem[]>([])
   const [searchTerm, setSearchTerm] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("all")
+  const [activeTab, setActiveTab] = useState("all")
   const [isCartOpen, setIsCartOpen] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
@@ -30,18 +31,17 @@ export default function EcommerceSection() {
 
   useEffect(() => {
     filterProducts()
-  }, [products, searchTerm, selectedCategory])
+  }, [products, searchTerm, activeTab])
 
   useEffect(() => {
     // Guardar carrito en localStorage
-    localStorage.setItem("aluvril-cart", JSON.stringify(cart))
+    localStorage.setItem("placacentro-cart", JSON.stringify(cart))
     // Disparar evento para actualizar el contador del footer
     window.dispatchEvent(new Event("storage"))
   }, [cart])
 
   const loadProducts = async () => {
     try {
-      console.log("Cargando productos...")
       const response = await fetch("/api/products")
       if (!response.ok) {
         throw new Error("Error al cargar productos")
@@ -49,16 +49,14 @@ export default function EcommerceSection() {
       const data = await response.json()
       setProducts(data)
       setLoading(false)
-      console.log("Productos cargados:", data.length)
     } catch (err) {
-      console.error("Error cargando productos:", err)
       setError("No se pudieron cargar los productos")
       setLoading(false)
     }
   }
 
   const loadCart = () => {
-    const savedCart = localStorage.getItem("aluvril-cart")
+    const savedCart = localStorage.getItem("placacentro-cart")
     if (savedCart) {
       setCart(JSON.parse(savedCart))
     }
@@ -67,8 +65,8 @@ export default function EcommerceSection() {
   const filterProducts = () => {
     let filtered = products
 
-    if (selectedCategory !== "all") {
-      filtered = filtered.filter((product) => product.category === selectedCategory)
+    if (activeTab !== "all") {
+      filtered = filtered.filter((product) => product.category === activeTab)
     }
 
     if (searchTerm) {
@@ -83,8 +81,6 @@ export default function EcommerceSection() {
   }
 
   const addToCart = (product: Product, quantity = 1) => {
-    console.log("Añadiendo al carrito:", product.name, "Cantidad:", quantity)
-
     setCart((prevCart) => {
       const existingItem = prevCart.find((item) => item.product.id === product.id)
 
@@ -169,58 +165,47 @@ export default function EcommerceSection() {
       </div>
 
       {/* Filters and Search */}
-      <section className="container mx-auto px-6 py-6">
-        <div className="flex flex-col md:flex-row gap-4 mb-6">
-          <div className="flex-1">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <Input
-                type="text"
-                placeholder="Buscar productos..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 rounded-full border-gray-200"
-              />
-            </div>
-          </div>
-
-          <div className="md:w-64">
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger className="rounded-full border-gray-200">
-                <SelectValue placeholder="Todas las categorías" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todas las categorías</SelectItem>
-                {categories.map((category) => (
-                  <SelectItem key={category} value={category}>
-                    {category}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+      <div className="flex flex-col md:flex-row gap-4 mb-6">
+        <div className="flex-1">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Input
+              type="text"
+              placeholder="Buscar productos..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 rounded-full border-gray-200"
+            />
           </div>
         </div>
+      </div>
 
-        <div className="mb-4">
-          <p className="text-gray-600">
-            Mostrando {filteredProducts.length} de {products.length} productos
-          </p>
-        </div>
-
-        {/* Products Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} onAddToCart={addToCart} />
+      {/* Tabs de categorías */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="mb-6 flex flex-wrap gap-2 bg-white rounded-xl p-2 shadow">
+          <TabsTrigger value="all" className="min-w-[120px]">Todas las categorías</TabsTrigger>
+          {categories.map((category) => (
+            <TabsTrigger key={category} value={category} className="min-w-[120px] capitalize">{category}</TabsTrigger>
           ))}
-        </div>
-
-        {filteredProducts.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">No se encontraron productos</p>
-            <p className="text-gray-400">Intenta con otros términos de búsqueda</p>
-          </div>
-        )}
-      </section>
+        </TabsList>
+        {/* Contenido de cada tab */}
+        {["all", ...categories].map((category) => (
+          <TabsContent key={category} value={category} className="w-full">
+            <div className="mb-4">
+              <p className="text-gray-600">
+                Mostrando {filteredProducts.filter(p => category === "all" || p.category === category).length} de {products.length} productos
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredProducts
+                .filter((product) => category === "all" || product.category === category)
+                .map((product) => (
+                  <ProductCard key={product.id} product={product} onAddToCart={addToCart} />
+                ))}
+            </div>
+          </TabsContent>
+        ))}
+      </Tabs>
 
       {/* Cart Sidebar */}
       <Cart

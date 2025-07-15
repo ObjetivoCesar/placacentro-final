@@ -14,14 +14,14 @@ function App() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
               <img 
-                src="/images/logo.webp" 
-                alt="DISTRIBUIDORA DE ALUMINIO Y VIDRIO" 
+                src="/images/logo-placacentro.jpeg" 
+                alt="Placacentro Decomaderas" 
                 className="h-10 w-auto"
                 onError={(e) => {
                   e.target.style.display = 'none'
                 }}
               />
-              <h1 className="text-xl font-bold text-gray-900">DISTRIBUIDORA DE ALUMINIO Y VIDRIO</h1>
+              <h1 className="text-xl font-bold text-gray-900">Placacentro Decomaderas</h1>
             </div>
             <Button 
               className="bg-green-600 hover:bg-green-700 text-white"

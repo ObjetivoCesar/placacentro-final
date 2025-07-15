@@ -6,10 +6,10 @@ import "./globals.css"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "DISTRIBUIDORA DE ALUMINIO Y VIDRIO - Catálogo Digital",
+  title: "Placacentro Decomaderas - Catálogo Digital",
   description:
-    "Sistema digital de generación de pedidos para aluminio y vidrio. Catálogo de productos para profesionales y empresas.",
-  keywords: "aluminio, vidrio, distribuidora, catálogo, Loja, Ecuador",
+    "Placacentro Decomaderas: Su proveedor confiable de tableros, ferretería, sillas y más. Catálogo digital para profesionales y empresas.",
+  keywords: "placacentro, decomaderas, tableros, ferretería, sillas, catálogo, Loja, Ecuador",
   generator: 'v0.dev'
 }
 

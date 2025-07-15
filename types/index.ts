@@ -1,5 +1,5 @@
 /**
- * TIPOS DE DATOS: Sistema E-commerce Aluvril
+ * TIPOS DE DATOS: Sistema E-commerce Placacentro
  *
  * PROPÓSITO:
  * - Definir interfaces TypeScript para type safety
@@ -53,7 +53,7 @@ export interface Product {
  *
  * USO:
  * - Array de CartItem forma el carrito completo
- * - Se persiste en localStorage como "aluvril-cart"
+ * - Se persiste en localStorage como "placacentro-cart"
  * - Se envía completo en mensajes de chat y pedidos
  */
 export interface CartItem {

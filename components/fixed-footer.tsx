@@ -20,7 +20,7 @@ export default function FixedFooter({ activeSection, onSectionChange }: FixedFoo
   // Simular conteo del carrito (en producción vendría del estado global)
   useEffect(() => {
     const updateCartCount = () => {
-      const cartData = localStorage.getItem("aluvril-cart")
+      const cartData = localStorage.getItem("placacentro-cart")
       if (cartData) {
         const cart = JSON.parse(cartData)
         const count = cart.reduce((total: number, item: any) => total + item.quantity, 0)

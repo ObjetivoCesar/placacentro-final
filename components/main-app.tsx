@@ -75,8 +75,8 @@ export default function MainApp() {
                 </div>
               </div>
               <div>
-                <h1 className="text-xl font-bold text-white">DISTRIBUIDORA DE ALUMINIO Y VIDRIO</h1>
-                <p className="text-xs text-orange-400">Aluvril</p>
+                <h1 className="text-xl font-bold text-white">Placacentro Decomaderas</h1>
+                <p className="text-xs text-orange-400">Su proveedor confiable de tableros, ferretería, sillas y más.</p>
               </div>
             </div>
           </div>
@@ -186,9 +186,7 @@ export default function MainApp() {
                   <div>
                     <h3 className="text-3xl font-bold text-gray-800 mb-6">Más de 20 años de experiencia</h3>
                     <p className="text-gray-600 mb-6 leading-relaxed">
-                      En DISTRIBUIDORA DE ALUMINIO Y VIDRIO somos especialistas en brindar soluciones integrales para
-                      carpinteros y profesionales de la construcción. Nuestro compromiso es ofrecer productos de la más
-                      alta calidad y un servicio excepcional.
+                      En Placacentro Decomaderas somos especialistas en brindar soluciones integrales para carpinteros y profesionales de la construcción. Su proveedor confiable de tableros, ferretería, sillas y más.
                     </p>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="text-center p-4 bg-green-50 rounded-lg">
@@ -204,7 +202,7 @@ export default function MainApp() {
                   <div className="relative">
                     <Image
                       src="/images/instalaciones.jpeg"
-                      alt="Instalaciones Aluvril"
+                      alt="Instalaciones Placacentro"
                       width={600}
                       height={400}
                       className="rounded-lg shadow-lg"
@@ -241,6 +239,41 @@ export default function MainApp() {
 
       {/* Chat flotante */}
       <FloatingChat />
+    </div>
+  )
+}
+
+// Nuevo componente AppShell para layout reutilizable
+export function AppShell({ children, activeSection, setActiveSection }: {
+  children: React.ReactNode,
+  activeSection?: string,
+  setActiveSection?: (section: any) => void
+}) {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-[#18181b] via-[#23232a] to-[#18181b] pb-20">
+      {/* Header minimalista con branding */}
+      <header className="bg-[#23232a]/80 backdrop-blur-md border-b border-[#23232a] sticky top-0 z-40 shadow-lg">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex items-center justify-center">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center shadow-lg">
+                <div className="w-6 h-6 bg-[#23232a] rounded-full flex items-center justify-center">
+                  <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
+                </div>
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-white">Placacentro Decomaderas</h1>
+                <p className="text-xs text-orange-400">Su proveedor confiable de tableros, ferretería, sillas y más.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+      <main>{children}</main>
+      {/* Footer fijo con navegación, solo si se pasa setActiveSection */}
+      {setActiveSection && activeSection && (
+        <FixedFooter activeSection={activeSection} onSectionChange={setActiveSection} />
+      )}
     </div>
   )
 }

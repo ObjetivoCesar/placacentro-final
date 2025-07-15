@@ -1,5 +1,5 @@
 /**
- * SCRIPT: Backup ZIP de todo el proyecto Aluvril
+ * SCRIPT: Backup ZIP de todo el proyecto Placacentro
  *
  * - Crea un archivo ZIP con los archivos clave del proyecto (data, scripts, docs, components, app)
  * - El ZIP se guarda en la carpeta raíz con timestamp
@@ -9,7 +9,7 @@ const fs = require("fs")
 const path = require("path")
 const archiver = require("archiver")
 
-const OUTPUT = path.join(__dirname, `../backup_aluvril_${Date.now()}.zip`)
+const OUTPUT = path.join(__dirname, `../backup_placacentro_${Date.now()}.zip`)
 const output = fs.createWriteStream(OUTPUT)
 const archive = archiver("zip", { zlib: { level: 9 } })
 

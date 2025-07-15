@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
 
         // METADATOS ADICIONALES
         type: "ecommerce-order",
-        source: "aluvril-ecommerce",
+        source: "placacentro-ecommerce",
 
         // INFORMACIÓN DEL USUARIO
         userId: userId,
