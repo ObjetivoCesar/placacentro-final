@@ -91,7 +91,15 @@ export default function MainApp() {
             <section className="container mx-auto px-6 py-12">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
                 {/* Optimización de Cortes */}
-                <div className="group cursor-pointer relative" onClick={() => setActiveSection("optimization")}> 
+                <div className="group cursor-pointer relative" onClick={() => {
+                  setActiveSection("optimization");
+                  setTimeout(() => {
+                    const el = document.getElementById("imagenes-referencia");
+                    if (el) {
+                      el.scrollIntoView({ behavior: "smooth", block: "center" });
+                    }
+                  }, 400); // Espera a que la sección se renderice
+                }}> 
                   {/* Halo decorativo */}
                   <div className="absolute -inset-2 z-0 rounded-3xl bg-gradient-to-br from-orange-400/30 to-orange-600/10 blur-xl opacity-80 group-hover:opacity-100 transition-all"></div>
                   <div className="relative bg-gradient-to-br from-blue-500 to-blue-700 rounded-3xl p-8 text-white transform transition-all duration-300 hover:scale-105 hover:shadow-2xl z-10">
